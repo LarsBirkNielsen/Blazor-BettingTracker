@@ -1,0 +1,45 @@
+﻿@page "/leagues"
+@inherits LeaguesBase
+
+<h3>Leagues</h3>
+
+@if (Leagues == null && ErrorMessage == null)
+{
+    <DisplaySpinner />
+}
+else if (ErrorMessage != null)
+{
+    <DisplayError ErrorMessage="@ErrorMessage"></DisplayError>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Country</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var league in Leagues)
+            {
+                <tr>
+                    <td>@league.Name</td>
+                    <td>@league.Country</td>
+                    <td>
+                        <button class="btn btn-primary"
+                        @onclick="(() => ShowLeague_Click(league.Id))">
+                            <i class="oi oi-pencil"></i>
+                        </button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <button class="btn btn-primary"
+        @onclick="(() => CreateNewLeague_Click())">
+        Create League
+    </button>
+}
+

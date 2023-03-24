@@ -1,0 +1,45 @@
+﻿@page "/predictions"
+@inherits PredictionsBase
+
+<h3>Predictions</h3>
+
+@if (Predictions == null && ErrorMessage == null)
+{
+    <DisplaySpinner />
+}
+else if (ErrorMessage != null)
+{
+    <DisplayError ErrorMessage="@ErrorMessage"></DisplayError>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Home Team</th>
+                <th>Away Team</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var prediction in Predictions)
+            {
+                <tr>
+                    <td>@prediction.HomeTeam</td>
+                    <td>@prediction.AwayTeam</td>
+                    <td>
+                        <button class="btn btn-primary"
+                        @onclick="(() => ShowPrediction_Click(prediction.Id))">
+                            <i class="oi oi-pencil"></i>
+                        </button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <button class="btn btn-primary"
+        @onclick="(() => CreateNewPrediction_Click())">
+        Create Prediction
+    </button>
+}
+

@@ -26,7 +26,7 @@ public class PredictionController : ControllerBase
     {
         try
         {
-            var userId =  _authService.GetUserId();
+            var userId = _authService.GetUserId();
             Console.WriteLine("UserId " + userId);
             var predicitons = await _predictionService.GetPredictions(userId);
 
@@ -121,6 +121,26 @@ public class PredictionController : ControllerBase
                 return NotFound();
             }
             return Ok(prediction);
+
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+        }
+    }
+
+    [HttpGet]
+    [Route("/high-score")]
+    public async Task<ActionResult<List<UserDto>>> GetTopProfitableUsers()
+    {
+        try
+        {
+            var topProfitableUsers = await _predictionService.GetTopProfitableUsersAsync();
+            if (topProfitableUsers == null)
+            {
+                return NotFound();
+            }
+            return Ok(topProfitableUsers);
 
         }
         catch (Exception ex)

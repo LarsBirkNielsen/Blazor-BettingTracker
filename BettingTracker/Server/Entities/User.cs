@@ -10,5 +10,5 @@ public class User
     public byte[] PasswordSalt { get; set; }
     public DateTime DateCreated { get; set; } = DateTime.Now;
     public string Role { get; set; } = "Better";
-    public List<Prediction> Predictions { get; set; }
+    public ICollection<Prediction> Predictions { get; set; }
 }

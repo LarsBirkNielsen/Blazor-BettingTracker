@@ -5,31 +5,31 @@ using BettingTracker.Server.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace BettingTracker.Server.Services.LeagueService
+namespace BettingTracker.Server.Services.TeamService
 {
-    public class LeagueService : ITeamService
+    public class TeamService : ITeamService
     {
         private readonly DataContext _context;
 
-        public LeagueService(DataContext context)
+        public TeamService(DataContext context)
         {
             _context = context;
         }
 
-        public async Task<League> CreateLeague(LeagueDto leagueDto)
+        public async Task<Team> CreateTeam(TeamDto teamDto)
         {
-            var existingLeague = await _context.Leagues
-                .SingleOrDefaultAsync(league => league.Id == leagueDto.Id);
+            var existingTeam = await _context.Leagues
+                .SingleOrDefaultAsync(league => league.Id == teamDto.Id);
 
-            if (existingLeague != null)
+            if (existingTeam != null)
             {
-                throw new ArgumentException("A league with the same ID already exists", nameof(leagueDto));
+                throw new ArgumentException("A team with the same ID already exists", nameof(teamDto));
             }
 
-            var league = new League
+            var league = new Team
             {
-                Id = leagueDto.Id,
-                Name = leagueDto.Name,
+                Id = teamDto.Id,
+                Name = teamDto.Name,
                 Country = leagueDto.Country
             };
 

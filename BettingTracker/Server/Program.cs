@@ -21,7 +21,7 @@ builder.Services.AddDbContext<DataContext>(options =>
 
 //My Services
 builder.Services.AddScoped<IAuthService, AuthService>();
-builder.Services.AddScoped<ILeagueService, LeagueService>();
+builder.Services.AddScoped<ITeamService, LeagueService>();
 builder.Services.AddScoped<IPredictionService, PredictionService>();
 
 

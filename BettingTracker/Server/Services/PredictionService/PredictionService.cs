@@ -89,6 +89,25 @@ namespace BettingTracker.Server.Services.PredictionService
             return predictions;
         }
 
+        public async Task<List<UserDto>> GetTopProfitableUsersAsync()
+        {
+            var users = await _context.Users.Include(u => u.Predictions)
+                                    .ThenInclude(p => p.League)
+                                    .ToListAsync();
+
+            var usersWithProfit = users.Select(u => new UserDto
+            {
+                Id = u.Id,
+                Email = u.Email,
+                Profit = u.Predictions.Sum(p => p.Profit)
+            })
+            .OrderByDescending(u => u.Profit)
+            .Take(10)
+            .ToList();
+
+            return usersWithProfit;
+        }
+
         public async Task<Prediction> UpdatePrediction(int id, PredictionDto updatedPrediction)
         {
 
@@ -99,12 +118,7 @@ namespace BettingTracker.Server.Services.PredictionService
                 {
                     throw new Exception($"League with id {id} not found.");
                 }
-
                 // Update properties of the Prediction entity based on the values in the DTO
-                //predictionToUpdate.HomeTeamId = updatedPrediction.HomeTeamId;
-                //predictionToUpdate.AwayTeamId = updatedPrediction.AwayTeamId;
-                //predictionToUpdate.UserId = updatedPrediction.UserId;
-                //predictionToUpdate.PredictionTypeId = updatedPrediction.PredictionTypeId;
                 predictionToUpdate.KickOff = updatedPrediction.KickOff;
                 predictionToUpdate.LeagueId = updatedPrediction.LeagueId;
                 predictionToUpdate.HomeTeam = updatedPrediction.HomeTeam;

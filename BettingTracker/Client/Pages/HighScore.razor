@@ -1,0 +1,41 @@
+﻿@page "/leadboard"
+@using System.Globalization
+@inherits HighScoreBase
+
+<h1>Top 10 Users by Profit</h1>
+
+@if (Predictions == null)
+{
+    <p>Loading predictions...</p>
+}
+else if (!Predictions.Any())
+{
+    <p>No users found.</p>
+}
+else
+{
+    <div class="table-container">
+
+        <table class="table ">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>User</th>
+                    <th>Profit</th>
+                    <th>Roi</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var prediction in Predictions)
+                {
+                    <tr>
+                        <td>@(Predictions.IndexOf(prediction) + 1)</td>
+                        <td>@prediction.Email</td>
+                        <td>@prediction.Profit.ToString("C0", CultureInfo.CreateSpecificCulture("da-DK"))</td>
+                        <td>@prediction.Profit.ToString("C0", CultureInfo.CreateSpecificCulture("da-DK"))</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

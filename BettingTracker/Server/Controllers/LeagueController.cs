@@ -11,9 +11,9 @@ namespace BettingTracker.Server.Controllers
     [ApiController]
     public class LeagueController : ControllerBase
     {
-        private readonly ILeagueService _leagueService;
+        private readonly ITeamService _leagueService;
 
-        public LeagueController(ILeagueService leagueService)
+        public LeagueController(ITeamService leagueService)
         {
             _leagueService = leagueService;
         }

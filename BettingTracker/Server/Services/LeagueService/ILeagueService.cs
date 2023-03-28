@@ -3,7 +3,7 @@ using BettingTracker.Server.Entities;
 
 namespace BettingTracker.Server.Services.LeagueService
 {
-    public interface ILeagueService
+    public interface ITeamService
     {
         Task<League?> GetLeagueById(int leagueId);
         Task<List<League>> GetLeagues();

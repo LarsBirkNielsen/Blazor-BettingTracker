@@ -65,5 +65,41 @@ namespace BettingTracker.Server.Extensions
 
             return result;
         }
+
+        public static UserDto ConvertToDto(this User user)
+        {
+            decimal totalProfit = 0;
+            foreach (var prediction in user.Predictions)
+            {
+                totalProfit += prediction.Profit;
+            }
+
+            return new UserDto
+            {
+                Id = user.Id,
+                Email = user.Email,
+                Profit = totalProfit
+            };
+        }
+
+        public static List<UserDto> ConvertToDto(this List<User> users)
+        {
+            var result = new List<UserDto>();
+            foreach (var user in users)
+            {
+                decimal totalProfit = 0;
+                foreach (var prediction in user.Predictions)
+                {
+                    totalProfit += prediction.Profit;
+                }
+                result.Add(new UserDto
+                {
+                    Id = user.Id,
+                    Email = user.Email,
+                    Profit = totalProfit
+                });
+            }
+            return result;
+        }
     }
 }

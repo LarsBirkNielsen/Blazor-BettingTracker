@@ -10,4 +10,5 @@ public interface IPredictionService
     Task<Prediction> CreatePrediction(PredictionDto prediction);
     Task<Prediction?> UpdatePrediction(int predictionId, PredictionDto prediction);
     Task<Prediction> DeletePrediction(int id);
+    Task<List<UserDto>> GetTopProfitableUsersAsync();
 }

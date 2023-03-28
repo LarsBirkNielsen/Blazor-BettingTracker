@@ -3,76 +3,77 @@
 @page "/prediction/{id:int}"
 @inherits PredictionBase
 
-@if (Id == null)
-{
-    <PageTitle>Create Prediction</PageTitle>
-    <h3 class="table-header">Create Prediction</h3>
-}
-else
-{
-    <PageTitle>Edit @Prediction.HomeTeam Vs. @Prediction.AwayTeam</PageTitle>
-    <h3 class="table-header">Edit @Prediction.HomeTeam Vs. @Prediction.AwayTeam</h3>
-}
+<body>
+    @if (Id == null)
+    {
+        <PageTitle>Create Prediction</PageTitle>
+        <h3 class="table-header">Create Prediction</h3>
+    }
+    else
+    {
+        <PageTitle>Edit @Prediction.HomeTeam Vs. @Prediction.AwayTeam</PageTitle>
+        <h3 class="table-header">Edit @Prediction.HomeTeam Vs. @Prediction.AwayTeam</h3>
+    }
+
+    <EditForm Model="Prediction" OnSubmit="HandleSubmit">
 
 
+        <div class="table-container">
+            <div>
+                <label for="kickOff">Kick Off</label>
+                <InputDate id="kickOff" @bind-Value="Prediction.KickOff" class=" form-control"></InputDate>
+            </div>
+            <div>
+                @if (Leagues.Any())
+                {
+                    <label>League</label>
+                    <br />
+                    <InputSelect @bind-Value="Prediction.LeagueId" class="form-select" required>
+                        @foreach (var league in Leagues)
+                        {
+                            <option value="@league.Id">@league.Name</option>
+                        }
+                    </InputSelect>
+                }
+            </div>
+            <div>
+                <label for="homeTeam">Home Team</label>
+                <InputText id="homeTeam" @bind-Value="Prediction.HomeTeam" class="form-control"></InputText>
+            </div>
 
-<EditForm Model="Prediction" OnSubmit="HandleSubmit">
+            <div>
+                <label for="awayTeam">Away Team</label>
+                <InputText id="awayTeam" @bind-Value="Prediction.AwayTeam" class="form-control"></InputText>
+            </div>
 
+            <div>
+                <label for="odds">Odds</label>
+                <InputText id="odds" @bind-Value="Prediction.Odds" class="form-control"></InputText>
+            </div>
 
-    <div class="table-container">
-        <div>
-            <label for="kickOff">Kick Off</label>
-            <InputDate id="kickOff" @bind-Value="Prediction.KickOff" class=" form-control"></InputDate>
-        </div>
-        <div>
-            @if (Leagues.Any())
-            {
-                <label>League</label>
-                <br />
-                <InputSelect @bind-Value="Prediction.LeagueId" class="form-select">
-                    @foreach (var league in Leagues)
+            <div>
+                <label for="tip">Tip</label>
+                <InputText id="tip" @bind-Value="Prediction.Tip" class="form-control"></InputText>
+            </div>
+
+            <div>
+                <label for="stake">Stake</label>
+                <InputText id="stake" @bind-Value="Prediction.Stake" class="form-control"></InputText>
+            </div>
+            <div>
+                <label>Status</label><br />
+                <InputSelect @bind-Value="Prediction.Status" class="form-select">
+                    @foreach (var status in Enum.GetValues(typeof(StatusEnum)))
                     {
-                        <option value="@league.Id">@league.Name</option>
+                        <option value="@status">@status</option>
                     }
                 </InputSelect>
-            }
-        </div>
-        <div>
-            <label for="homeTeam">Home Team</label>
-            <InputText id="homeTeam" @bind-Value="Prediction.HomeTeam" class="form-control"></InputText>
-        </div>
+            </div>
 
-        <div>
-            <label for="awayTeam">Away Team</label>
-            <InputText id="awayTeam" @bind-Value="Prediction.AwayTeam" class="form-control"></InputText>
-        </div>
+            <br />
+            <button type="submit" class="btn my-btn-primary">@btnText</button>
+            <button @onclick="(() => CancelClick())" class="btn my-btn-secondary">Cancel</button>
 
-        <div>
-            <label for="odds">Odds</label>
-            <InputText id="odds" @bind-Value="Prediction.Odds" class="form-control"></InputText>
         </div>
-
-        <div>
-            <label for="tip">Tip</label>
-            <InputText id="tip" @bind-Value="Prediction.Tip" class="form-control"></InputText>
-        </div>
-
-        <div>
-            <label for="stake">Stake</label>
-            <InputText id="stake" @bind-Value="Prediction.Stake" class="form-control"></InputText>
-        </div>
-        <div>
-            <label>Status</label><br />
-            <InputSelect @bind-Value="Prediction.Status" class="form-select">
-                @foreach (var status in Enum.GetValues(typeof(StatusEnum)))
-                {
-                    <option value="@status">@status</option>
-                }
-            </InputSelect>
-        </div>
-
-        <br />
-        <button type="submit" class="btn btn-primary">@btnText</button>
-    </div>
-
-</EditForm>
+    </EditForm>
+</body>

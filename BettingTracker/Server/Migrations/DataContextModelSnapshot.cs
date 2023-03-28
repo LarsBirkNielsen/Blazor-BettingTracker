@@ -111,7 +111,11 @@ namespace BettingTracker.Server.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("UserId")
+                    b.Property<string>("UserEmail")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("UserId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -123,36 +127,6 @@ namespace BettingTracker.Server.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Predictions");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            AwayTeam = "Napoli",
-                            HomeTeam = "Spezia",
-                            KickOff = new DateTime(2023, 3, 23, 15, 15, 37, 388, DateTimeKind.Local).AddTicks(9792),
-                            LeagueId = 1,
-                            Odds = "1.40",
-                            Profit = 120m,
-                            Stake = "300",
-                            Status = "Won",
-                            TeamToWin = "Napoli",
-                            Tip = "2"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            AwayTeam = "Manchester City",
-                            HomeTeam = "Tottenham",
-                            KickOff = new DateTime(2023, 3, 23, 15, 15, 37, 388, DateTimeKind.Local).AddTicks(9799),
-                            LeagueId = 2,
-                            Odds = "2.40",
-                            Profit = -300m,
-                            Stake = "300",
-                            Status = "Lost",
-                            TeamToWin = "Manchester City",
-                            Tip = "2"
-                        });
                 });
 
             modelBuilder.Entity("BettingTracker.Server.Entities.PredictionType", b =>
@@ -286,11 +260,15 @@ namespace BettingTracker.Server.Migrations
                         .WithMany("Predictions")
                         .HasForeignKey("PredictionTypeId");
 
-                    b.HasOne("BettingTracker.Server.Entities.User", null)
+                    b.HasOne("BettingTracker.Server.Entities.User", "User")
                         .WithMany("Predictions")
-                        .HasForeignKey("UserId");
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("League");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("BettingTracker.Server.Entities.Team", b =>

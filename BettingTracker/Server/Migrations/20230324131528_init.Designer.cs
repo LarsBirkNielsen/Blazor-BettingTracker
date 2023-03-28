@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BettingTracker.Server.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20230323131022_init")]
+    [Migration("20230324131528_init")]
     partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -105,11 +105,15 @@ namespace BettingTracker.Server.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("TeamToWin")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Tip")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("UserId")
+                    b.Property<int>("UserId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -121,34 +125,6 @@ namespace BettingTracker.Server.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Predictions");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            AwayTeam = "Napoli",
-                            HomeTeam = "Spezia",
-                            KickOff = new DateTime(2023, 3, 23, 14, 10, 22, 116, DateTimeKind.Local).AddTicks(5077),
-                            LeagueId = 1,
-                            Odds = "1.40",
-                            Profit = 120m,
-                            Stake = "300",
-                            Status = "Won",
-                            Tip = "2"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            AwayTeam = "Manchester City",
-                            HomeTeam = "Tottenham",
-                            KickOff = new DateTime(2023, 3, 23, 14, 10, 22, 116, DateTimeKind.Local).AddTicks(5084),
-                            LeagueId = 2,
-                            Odds = "2.40",
-                            Profit = -300m,
-                            Stake = "300",
-                            Status = "Lost",
-                            Tip = "2"
-                        });
                 });
 
             modelBuilder.Entity("BettingTracker.Server.Entities.PredictionType", b =>
@@ -282,11 +258,15 @@ namespace BettingTracker.Server.Migrations
                         .WithMany("Predictions")
                         .HasForeignKey("PredictionTypeId");
 
-                    b.HasOne("BettingTracker.Server.Entities.User", null)
+                    b.HasOne("BettingTracker.Server.Entities.User", "User")
                         .WithMany("Predictions")
-                        .HasForeignKey("UserId");
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("League");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("BettingTracker.Server.Entities.Team", b =>

@@ -31,22 +31,9 @@ namespace BettingTracker.Server.Extensions
         {
             return new PredictionDto
             {
-                //Id = prediction.Id,
-                //HomeTeamId = prediction.HomeTeamId,
-                //AwayTeamId = prediction.AwayTeamId,
-                //UserId = prediction.UserId,
-                //PredictionTypeId = prediction.PredictionTypeId,
-                //KickOff = prediction.KickOff,
-                //Tip = prediction.Tip,
-                //Odds = prediction.Odds,
-                //Stake = prediction.Stake,
-                //Profit = prediction.Profit,
-                //Status = prediction.Status
-
                 Id = prediction.Id,
                 KickOff = prediction.KickOff,
                 LeagueId = prediction.LeagueId,
-                //LeagueName = prediction.LeagueName,
                 HomeTeam = prediction.HomeTeam,
                 AwayTeam = prediction.AwayTeam,
                 Tip = prediction.Tip,
@@ -63,8 +50,8 @@ namespace BettingTracker.Server.Extensions
             {
                 Id = prediction.Id,
                 KickOff = prediction.KickOff,
-                LeagueId = prediction.LeagueId,
-                //LeagueName = prediction.LeagueName,
+                LeagueId = prediction.League.Id,
+                LeagueName = prediction.League.Name,
                 HomeTeam = prediction.HomeTeam,
                 AwayTeam = prediction.AwayTeam,
                 Tip = prediction.Tip,
@@ -72,18 +59,10 @@ namespace BettingTracker.Server.Extensions
                 Stake = prediction.Stake,
                 Profit = prediction.Profit,
                 Status = prediction.Status
+                
 
-        //HomeTeamId = prediction.HomeTeamId,
-        //AwayTeamId = prediction.AwayTeamId,
-        //UserId = prediction.UserId,
-        //PredictionTypeId = prediction.PredictionTypeId,
-        //KickOff = prediction.KickOff,
-        //Tip = prediction.Tip,
-        //Odds = prediction.Odds,
-        //Stake = prediction.Stake,
-        //Profit = prediction.Profit,
-        //Status = prediction.Status
-    }).ToList();
+            }).ToList();
+
             return result;
         }
     }

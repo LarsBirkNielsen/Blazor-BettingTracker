@@ -8,6 +8,6 @@ namespace BettingTracker.Client.Services.PredictionService
         Task<PredictionDto?> GetPredictionById(int id);
         Task<PredictionDto> CreatePrediction(PredictionDto predictionDto);
         Task<PredictionDto?> UpdatePrediction(int id, PredictionDto predictionDto);
-        Task DeletePrediction(int id);
+        Task <PredictionDto?>DeletePrediction(int id);
     }
 }

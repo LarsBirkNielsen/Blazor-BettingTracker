@@ -1,7 +1,10 @@
 ﻿using BettingTracker.Client.Services.LeagueService;
 using BettingTracker.Client.Services.PredictionService;
 using BettingTracker.Models.Dtos;
+using Blazored.LocalStorage;
 using Microsoft.AspNetCore.Components;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace BettingTracker.Client.Pages
 {
@@ -16,7 +19,8 @@ namespace BettingTracker.Client.Pages
         public ILeagueService LeagueService { get; set; }
         [Inject]
         public IManageLeaguesLocalStorageService ManageLeaguesLocalStorageService { get; set; }
-
+        [Inject]
+        public IManagePredictionsLocalStorageService ManagePredictionsLocalStorageService { get; set; }
 
         [Parameter]
         public int? Id { get; set; }
@@ -25,6 +29,7 @@ namespace BettingTracker.Client.Pages
 
         public PredictionDto Prediction = new();
         public IEnumerable<LeagueDto> Leagues { get; set; }
+
 
         protected override async Task OnInitializedAsync()
         {
@@ -36,12 +41,13 @@ namespace BettingTracker.Client.Pages
             {
                 btnText = "Update Prediction";
             }
-            // Call the LeagueService to get the list of leagues
-            //This way we are always sure the List will get initialized before it is used in the component's markup.
+
             if (Leagues == null)
             {
                 Leagues = new List<LeagueDto>();
             }
+            // Call the LeagueService to get the list of leagues
+            //This way we are always sure the List will get initialized before it is used in the component's markup.
             Leagues = await LeagueService.GetLeagues();
         }
 
@@ -65,15 +71,24 @@ namespace BettingTracker.Client.Pages
         {
             if (Id is null)
             {
+                ReplaceDotsWithCommas(Prediction); // replace dots with commas
                 await PredictionService.CreatePrediction(Prediction);
                 // Clear the input fields by resetting the League property to a new instance
                 Prediction = new();
             }
             else
             {
+                ReplaceDotsWithCommas(Prediction); // replace dots with commas
                 await PredictionService.UpdatePrediction((int)Id, Prediction);
                 NavigationManager.NavigateTo("/predictions");
             }
+        }
+
+        private void ReplaceDotsWithCommas(PredictionDto prediction)
+        {
+            prediction.Odds = prediction.Odds.Replace(".", ",");
+            prediction.Stake = prediction.Stake.Replace(".", ",");
+
         }
 
         protected async Task DeletePrediction()
@@ -82,7 +97,7 @@ namespace BettingTracker.Client.Pages
             NavigationManager.NavigateTo("/predictions");
         }
 
-        protected void HandleSeeListClick()
+        protected void CancelClick()
         {
             NavigationManager.NavigateTo("/predictions");
         }

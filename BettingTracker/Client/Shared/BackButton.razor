@@ -1,0 +1,15 @@
+﻿@using Microsoft.AspNetCore.WebUtilities
+@inject NavigationManager NavigationManager
+<button class="btn my-btn-back"
+        @onclick="GoBackClick">
+    Go Back
+</button>
+
+@code {
+    private string returnUrl = string.Empty;
+
+    protected void GoBackClick()
+    {
+        NavigationManager.NavigateTo("javascript:history.back()");
+    }
+}

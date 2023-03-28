@@ -9,6 +9,7 @@ namespace BettingTracker.Client.Services.PredictionService
         private readonly ILocalStorageService _localStorageService;
         private readonly IPredictionService _predictionService;
         private const string key = "PredictionCollection";
+        private const string userIdKey = "userId";
 
         public ManagePredictionsLocalStorageService(ILocalStorageService localStorageService, IPredictionService predictionService)
         {

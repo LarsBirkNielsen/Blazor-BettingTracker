@@ -1,5 +1,5 @@
-﻿@page "/predictions"
-@inherits PredictionsBase
+﻿@page "/history"
+@inherits PredictionHistoryBase
 
 <body>
 
@@ -11,30 +11,32 @@
     {
         <div class="table-container">
 
-            <table class="table ">
-                <thead>
+            <table class="table rounded-lg">
+                <thead class="rounded-top">
                     <tr>
                         <th>Kick Off</th>
-                        <th>League</th>
                         <th>Home Team</th>
                         <th>Away Team</th>
                         <th>Odds</th>
                         <th>Tip</th>
                         <th>Stake</th>
+                        <th>Profit</th>
+                        <th>Status</th>
                         <th></th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach (var prediction in Predictions)
                     {
-                        <tr>
-                            <td class="center">@prediction.KickOff.ToShortDateString()</td>
-                            <td>@prediction.LeagueName</td>
+                        <tr class="@SetCssClass(prediction.Status)">
+                            <td>@prediction.KickOff.ToShortDateString()</td>
                             <td>@prediction.HomeTeam</td>
                             <td>@prediction.AwayTeam</td>
                             <td>@prediction.Odds</td>
                             <td>@prediction.Tip</td>
                             <td>@prediction.Stake</td>
+                            <td>@prediction.Profit Kr.</td>
+                            <td>@prediction.Status</td>
                             <td>
                                 <button class="btn btn-primary-edit"
                                 @onclick="(() => ShowPrediction_Click(prediction.Id))">
@@ -49,10 +51,6 @@
                     }
                 </tbody>
             </table>
-            <button class="btn my-btn-primary"
-                @onclick="(() => CreateNewPrediction_Click())">
-                Create Prediction
-            </button>
         </div>
     }
 </body>

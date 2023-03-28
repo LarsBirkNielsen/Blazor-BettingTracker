@@ -1,5 +1,5 @@
-﻿@page "/predictions"
-@inherits PredictionsBase
+﻿@page "/pending"
+@inherits PendingPredictionsBase
 
 <body>
 
@@ -28,7 +28,7 @@
                     @foreach (var prediction in Predictions)
                     {
                         <tr>
-                            <td class="center">@prediction.KickOff.ToShortDateString()</td>
+                            <td>@prediction.KickOff.ToShortDateString()</td>
                             <td>@prediction.LeagueName</td>
                             <td>@prediction.HomeTeam</td>
                             <td>@prediction.AwayTeam</td>

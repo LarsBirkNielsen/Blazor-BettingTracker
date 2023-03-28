@@ -1,7 +1,10 @@
 using BettingTracker.Client;
+using BettingTracker.Client.Services.AuthService;
 using BettingTracker.Client.Services.LeagueService;
 using BettingTracker.Client.Services.PredictionService;
+using BlazorEcommerce.Client;
 using Blazored.LocalStorage;
+using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 
@@ -20,6 +23,12 @@ builder.Services.AddScoped<IPredictionService, PredictionService>();
 builder.Services.AddBlazoredLocalStorage();
 builder.Services.AddScoped<IManageLeaguesLocalStorageService, ManageLeaguesLocalStorageService>();
 builder.Services.AddScoped<IManagePredictionsLocalStorageService, ManagePredictionsLocalStorageService>();
+builder.Services.AddScoped<IAuthService, AuthService>();
+
+builder.Services.AddOptions();
+builder.Services.AddAuthorizationCore();
+builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthStateProvider>();
+
 
 
 

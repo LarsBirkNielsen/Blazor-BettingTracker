@@ -1,4 +1,5 @@
-﻿using BettingTracker.Client.Services.LeagueService;
+﻿using BettingTracker.Client.Enums;
+using BettingTracker.Client.Services.LeagueService;
 using BettingTracker.Client.Services.PredictionService;
 using BettingTracker.Models.Dtos;
 using Microsoft.AspNetCore.Components;
@@ -6,7 +7,7 @@ using Microsoft.AspNetCore.WebUtilities;
 
 namespace BettingTracker.Client.Pages
 {
-    public class PredictionsBase : ComponentBase
+    public class PendingPredictionsBase : ComponentBase
     {
         [Inject]
         public IPredictionService PredictionService { get; set; }
@@ -20,7 +21,6 @@ namespace BettingTracker.Client.Pages
 
         [Inject]
         public NavigationManager NavigationManager { get; set; }
-
         public IEnumerable<PredictionDto> Predictions { get; set; }
         public string ErrorMessage { get; set; }
         private string returnUrl = string.Empty;
@@ -32,7 +32,8 @@ namespace BettingTracker.Client.Pages
             {
                 await ClearLocalStorage();
 
-                Predictions = await ManagePredictionsLocalStorageService.GetCollection();
+                var predictionList = await ManagePredictionsLocalStorageService.GetCollection();
+                Predictions = GetPendingPredictions(predictionList);
             }
             catch (Exception ex)
             {
@@ -40,7 +41,13 @@ namespace BettingTracker.Client.Pages
 
             }
         }
-
+        private IEnumerable<PredictionDto> GetPendingPredictions(IEnumerable<PredictionDto> predictionList)
+        {
+            DateTime now = DateTime.Now;
+            List<PredictionDto> pendingPredictions = predictionList.Where(x =>
+                x.Status.Equals("Pending") && x.KickOff < now).ToList();
+            return pendingPredictions;
+        }
         protected void ShowPrediction_Click(int id)
         {
             NavigationManager.NavigateTo($"prediction/{id}");

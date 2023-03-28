@@ -19,6 +19,7 @@ namespace BettingTracker.Client.Services.PredictionService
         {
             try
             {
+                //predictionDto.UserId = userId;
                 var response = await _httpClient.PostAsJsonAsync("api/prediction", predictionDto);
 
                 if (response.IsSuccessStatusCode)
@@ -45,27 +46,21 @@ namespace BettingTracker.Client.Services.PredictionService
             }
         }
 
-        public async Task DeletePrediction(int id)
+        public async Task<PredictionDto> DeletePrediction(int id)
         {
             try
             {
-                var predictionToDelete = await GetPredictionById(id);
-                if (predictionToDelete == null)
-                {
-                    throw new Exception($"Prediction with id {id} not found.");
-                }
-
                 var response = await _httpClient.DeleteAsync($"api/prediction/{id}");
 
-                if (!response.IsSuccessStatusCode)
+                if (response.IsSuccessStatusCode)
                 {
-                    var message = await response.Content.ReadAsStringAsync();
-                    throw new Exception($"Http status code: {response.StatusCode} message: {message}");
+                    return await response.Content.ReadFromJsonAsync<PredictionDto>();
                 }
+                return default(PredictionDto);
             }
             catch (Exception)
             {
-                // Log exception
+                //Log exception
                 throw;
             }
         }

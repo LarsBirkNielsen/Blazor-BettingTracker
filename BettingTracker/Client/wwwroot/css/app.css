@@ -69,3 +69,38 @@ a, .btn-link {
     .blazor-error-boundary::after {
         content: "An error has occurred."
     }
+
+.my-btn-primary {
+    color: white;
+    background-color: #547793;
+    border-color: #547793;
+}
+
+.my-btn-primary:hover {
+    color: #4f4f4f;
+    background-color: white;
+    border-color: #4f4f4f;
+}
+
+.my-btn-secondary {
+    color: #4f4f4f;
+    background-color: white;
+    border-color: #4f4f4f;
+}
+.my-btn-secondary:hover {
+    color: white;
+    background-color: #547793;
+    border-color: #547793;
+}
+
+/*    .my-btn-primary:hover {
+        color: white;
+        background-color: #547793;
+        border-color: #547793;
+    }*/
+
+/*.my-btn-primary {
+    color: #4f4f4f;
+    background-color: white;
+    border-color: #4f4f4f;
+}*/

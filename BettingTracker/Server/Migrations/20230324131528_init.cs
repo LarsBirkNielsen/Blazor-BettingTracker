@@ -88,8 +88,9 @@ namespace BettingTracker.Server.Migrations
                     Profit = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     Status = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     LeagueId = table.Column<int>(type: "int", nullable: false),
-                    PredictionTypeId = table.Column<int>(type: "int", nullable: true),
-                    UserId = table.Column<int>(type: "int", nullable: true)
+                    TeamToWin = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    UserId = table.Column<int>(type: "int", nullable: false),
+                    PredictionTypeId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -109,7 +110,8 @@ namespace BettingTracker.Server.Migrations
                         name: "FK_Predictions_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.InsertData(
@@ -131,15 +133,6 @@ namespace BettingTracker.Server.Migrations
                     { 2, "Pre Game" },
                     { 3, "Over 1.5 Goals" },
                     { 4, "Over 2.5 Goals" }
-                });
-
-            migrationBuilder.InsertData(
-                table: "Predictions",
-                columns: new[] { "Id", "AwayTeam", "HomeTeam", "KickOff", "LeagueId", "Odds", "PredictionTypeId", "Profit", "Stake", "Status", "Tip", "UserId" },
-                values: new object[,]
-                {
-                    { 1, "Napoli", "Spezia", new DateTime(2023, 3, 23, 14, 10, 22, 116, DateTimeKind.Local).AddTicks(5077), 1, "1.40", null, 120m, "300", "Won", "2", null },
-                    { 2, "Manchester City", "Tottenham", new DateTime(2023, 3, 23, 14, 10, 22, 116, DateTimeKind.Local).AddTicks(5084), 2, "2.40", null, -300m, "300", "Lost", "2", null }
                 });
 
             migrationBuilder.InsertData(

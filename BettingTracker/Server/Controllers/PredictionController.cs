@@ -1,6 +1,7 @@
 ﻿using BettingTracker.Models.Dtos;
 using BettingTracker.Server.Entities;
 using BettingTracker.Server.Extensions;
+using BettingTracker.Server.Services.AuthService;
 using BettingTracker.Server.Services.PredictionService;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -12,18 +13,22 @@ namespace BettingTracker.Server.Controllers;
 public class PredictionController : ControllerBase
 {
     private readonly IPredictionService _predictionService;
+    private readonly IAuthService _authService;
 
-    public PredictionController(IPredictionService predictionService)
+    public PredictionController(IPredictionService predictionService, IAuthService authService)
     {
         _predictionService = predictionService;
+        _authService = authService;
     }
 
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<Prediction>>> GetPredictions()
+    public async Task<ActionResult<IEnumerable<PredictionDto>>> GetPredictions()
     {
         try
         {
-            var predicitons = await _predictionService.GetPredictions();
+            var userId =  _authService.GetUserId();
+            Console.WriteLine("UserId " + userId);
+            var predicitons = await _predictionService.GetPredictions(userId);
 
 
             if (predicitons == null)
@@ -104,17 +109,22 @@ public class PredictionController : ControllerBase
         }
     }
 
-    [HttpDelete("{id}")]
-    public async Task<ActionResult> DeletePrediction(int id)
+    [HttpDelete("{id:int}")]
+    public async Task<ActionResult<PredictionDto>> DeletePrediction(int id)
     {
         try
         {
-            await _predictionService.DeletePrediction(id);
-            return NoContent();
+            var prediction = await _predictionService.DeletePrediction(id);
+
+            if (prediction == null)
+            {
+                return NotFound();
+            }
+            return Ok(prediction);
+
         }
         catch (Exception ex)
         {
-            // Log exception
             return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
         }
     }

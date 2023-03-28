@@ -43,7 +43,9 @@ flex-column .test {
     width: 2.4rem;
     color: #004973;
 }
-
+nav-link{
+    cursor: pointer;
+}
 .nav-link-header {
     color: #547793;
     padding: 0 0 1rem 0.8rem;
@@ -52,6 +54,7 @@ flex-column .test {
 .nav-item {
     font-size: 1.0rem;
     padding-bottom: 0.5rem;
+    cursor: pointer;
 }
 
     .nav-item:first-of-type {

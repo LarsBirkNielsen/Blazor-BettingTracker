@@ -5,28 +5,13 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace BettingTracker.Models.Dtos;
 
 public class PredictionDto
 {
-    //public int Id { get; set; }
-    // public int LeagueId { get; set; }
-    //public string LeagueName { get; set; }
-    //public int HomeTeamId { get; set; }
-    //public string HomeTeamName { get; set; }
-    //public int AwayTeamId { get; set; }
-    //public string AwayTeamName { get; set; }
-    //public int UserId { get; set; }
-    //public string UserName { get; set; }
-    //public string PredictionType { get; set; }
-    //public int PredictionTypeId { get; set; }
-    //public DateTime KickOff { get; set; }
-    //public string Tip { get; set; }
-    //public string Odds { get; set; }
-    //public decimal Stake { get; set; }
-    //public decimal Profit { get; set; }
-    //public string Status { get; set; }
+
     public int Id { get; set; }
 
     [DisplayFormat(DataFormatString = "{0:dd/MM-yyyy}")]
@@ -44,7 +29,7 @@ public class PredictionDto
     public decimal Profit { get; set; }
     public string Status { get; set; } = "Pending";
 
-   // public League League { get; set; }
-    public int LeagueId { get; set; }
+    public int LeagueId { get; set; } = 1;
+    public string LeagueName { get; set; } = string.Empty;
 
 }

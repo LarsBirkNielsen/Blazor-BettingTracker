@@ -1,17 +1,21 @@
-﻿@inherits LayoutComponentBase
+﻿@using BettingTracker.Client.Pages
+@inherits LayoutComponentBase
+@attribute [Authorize]
 
-<div class="page">
-    <div class="sidebar">
-        <NavMenu />
-    </div>
-
-    <main>
-@*        <div class="top-row px-4">
-            <a href="https://docs.microsoft.com/aspnet/" target="_blank">About</a>
-        </div>*@
-
-        <div class="     px-4">
-            @Body
+<AuthorizeView>
+    <Authorized>
+        <div class="page">
+            <div class="sidebar">
+                <NavMenu />
+            </div>
+            <main>
+                <div class="">
+                    @Body
+                </div>
+            </main>
         </div>
-    </main>
-</div>
+    </Authorized>
+    <NotAuthorized>
+        <Login/>
+    </NotAuthorized>
+</AuthorizeView>

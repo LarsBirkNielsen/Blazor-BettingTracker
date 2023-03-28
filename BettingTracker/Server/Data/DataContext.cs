@@ -40,42 +40,14 @@ public class DataContext : DbContext
         //    .WithMany(pt => pt.Predictions)
         //    .HasForeignKey(p => p.PredictionTypeId);
 
+
+
         modelBuilder.Entity<League>().HasData(
             new League { Id = 1, Name = "Serie A", Country = "Italy" },
             new League { Id = 2, Name = "Premier League", Country = "England" },
             new League { Id = 3, Name = "La Liga", Country = "Spain" }
-            );
+    );
 
-        modelBuilder.Entity<Prediction>().HasData(
-                new Prediction
-                {
-                    Id = 1,
-                    KickOff = DateTime.Now,
-                    LeagueId = 1,
-                    HomeTeam = "Spezia",
-                    AwayTeam = "Napoli",
-                    Tip = "2",
-                    TeamToWin = "Napoli",
-                    Odds = "1.40",
-                    Stake = "300",
-                    Profit = 120,
-                    Status = "Won"
-                },
-                new Prediction
-                {
-                    Id = 2,
-                    KickOff = DateTime.Now,
-                    LeagueId = 2,
-                    HomeTeam = "Tottenham",
-                    AwayTeam = "Manchester City",
-                    Tip = "2",
-                    TeamToWin = "Manchester City",
-                    Odds = "2.40",
-                    Stake = "300",
-                    Profit = -300,
-                    Status = "Lost"
-                }
-                );
 
         modelBuilder.Entity<Team>().HasData(
              new Team

@@ -1,0 +1,17 @@
+﻿/*body {
+    //background-color: #d8e3e8;
+    min-height: 100vh;
+    padding: 2.5rem 5.5rem;
+}*/
+
+.heading-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    margin: 2rem;
+}
+
+.adjust-for-sidebar {
+    padding-left: 250px;
+}

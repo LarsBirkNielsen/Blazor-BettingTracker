@@ -1,0 +1,291 @@
+﻿@page "/dashboard"
+@using BettingTracker.Client.Services
+@using System.Globalization
+@using BettingTracker.Client.Services.DashboardService
+@using BettingTracker.Shared
+@inject IDataService _dataService
+@inject HttpClient Http
+
+<div class="row">
+
+    <!-- Earnings (Monthly) Card Example -->
+    <div class="col-xl-3 col-md-6 margin-b">
+        <div class="card border-left-primary shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold top-card-text-color text-uppercase mb-1">
+                            TOTAL PROFIT
+                        </div>
+                        <div class="h5 mb-0 font-weight-bold top-card-sub-header-text-color">@TotalProfit Kr.</div>
+                    </div>
+                    <div class="col-auto">
+                        <ion-icon class="top-card-icon" name="cash-outline"></ion-icon>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6 margin-b">
+        <div class="card border-left-primary shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold top-card-text-color text-uppercase text-uppercase mb-1">
+                            Total bets placed
+                        </div>
+                        <div class="h5 mb-0 font-weight-bold top-card-sub-header-text-color">@TotalBetsPlayed</div>
+                    </div>
+                    <div class="col-auto">
+                        <ion-icon class="top-card-icon" name="dice"></ion-icon>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6 margin-b">
+        <div class="card border-left-primary shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold top-card-text-color text-uppercase text-uppercase mb-1">
+                            Total wager
+                        </div>
+                        <div class="h5 mb-0 font-weight-bold top-card-sub-header-text-color">@TotalWager Kr.</div>
+                    </div>
+                    <div class="col-auto">
+                        <ion-icon class="top-card-icon" name="wallet"></ion-icon>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6 margin-b">
+        <div class="card border-left-primary shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold top-card-text-color text-uppercase text-uppercase mb-1">
+                            TOTAL roi
+                        </div>
+                        <div class="h5 mb-0 font-weight-bold top-card-sub-header-text-color">@TotalRoi %</div>
+                    </div>
+                    <div class="col-auto">
+                        <ion-icon class="top-card-icon" name="trending-up"></ion-icon>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+@*Accumalativ line-chart*@
+<div class="row">
+    <div class="col-lg-8 margin-b">
+        <div class="card">
+            <div class="card-header">
+                @currentYear - Bank Roll
+            </div>
+            <div class="card-body">
+                <RadzenChart >
+                    <RadzenLineSeries Stroke="#A7C7E7" Smooth="true" Data="@yearlyCumulativeProfit" CategoryProperty="Month" Title="Bank Roll"
+                                      LineType="LineType.Solid" ValueProperty="Amount">
+                        <RadzenMarkers MarkerType="MarkerType.Circle" />
+                    </RadzenLineSeries>
+                    <RadzenValueAxis Formatter="@FormatAsDKK">
+                        <RadzenGridLines Visible="true" />
+                    </RadzenValueAxis>
+                </RadzenChart>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-4 margin-b">
+        <div class="card">
+            <div class="card-header">
+                @currentYear - Hit Rate
+            </div>
+            <div class="card-body">
+                <RadzenChart>
+                    <RadzenDonutSeries Strokes="@doughnutStrokeColor" Fills="@doughnutFillColors" Title="Count" Data="@chartData" CategoryProperty="Label" ValueProperty="Value">
+                        <ChildContent>
+                            <RadzenSeriesDataLabels Visible="@showDataLabels" />
+                        </ChildContent>
+                        <TitleTemplate>
+                            <div class="rz-donut-content">
+                                <div>@winProcentage</div>
+                            </div>
+                        </TitleTemplate>
+                    </RadzenDonutSeries>
+                </RadzenChart>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-4 margin-b">
+        <div class="card test">
+            <div class="card-header">
+                @currentYear - Top Three Team Performance
+            </div>
+            <table class="table top-table">
+                <thead class="thead-dark">
+                    <tr>
+                        <th scope="col"></th>
+                        <th scope="col">Most Profitable Team</th>
+                       @* <th scope="col"></th>*@
+                        <th scope="col">$</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="good-team">
+                        <th scope="row"><ion-icon class="win-icon" name="checkmark"></ion-icon></th>
+                        <td>Cheslea</td>
+                        @*<td>Otto</td>*@
+                        <td>400 kr.</td>
+                    </tr>
+                    <tr class="good-team">
+                        <th scope="row"><ion-icon class="win-icon" name="checkmark"></ion-icon></th>
+                        <td>Arsenal</td>
+                       @* <td>Thornton</td>*@
+                        <td>350 kr.</td>
+                    </tr>
+                    <tr class="good-team">
+                        <th scope="row"><ion-icon class="win-icon" name="checkmark"></ion-icon></th>
+                        <td>Real Madrid</td>
+                       @* <td>the Bird</td>*@
+                        <td>325kr.</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <table class="table">
+                <thead class="thead-light">
+                    <tr class="tr.no-bottom-border td">
+                        <th scope="col"></th>
+                        <th scope="col">Least Profitable Team</th>
+                        @* <th scope="col"></th>*@
+                        <th scope="col">$</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="bad-team">
+                        <th scope="row"><ion-icon class="lost-icon" name="ban"></ion-icon></th>
+                        <td>At. Madrid</td>
+                        @*<td>Otto</td>*@
+                        <td>-450 kr.</td>
+                    </tr>
+                    <tr class="bad-team">
+                        <th scope="row"><ion-icon class="lost-icon" name="ban"></ion-icon></th>
+                        <td>Sunderland</td>
+                        @* <td>Thornton</td>*@
+                        <td>-350 kr.</td>
+                    </tr>
+                    <tr class="bad-team">
+                        <th scope="row"><ion-icon class="lost-icon" name="ban"></ion-icon></th>
+                        <td>Barcelona</td>
+                        @* <td>the Bird</td>*@
+                        <td>-325kr.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="col-lg-8 margin-b ">
+        <div class="card test">
+            <div class="card-header">
+                @currentYear - Monthly Profit
+            </div>
+            <div class="card-body">
+                <RadzenChart>
+                    <RadzenColumnSeries Stroke="#AACDBE" Fill="#AACDBE" Data="@yearlyProfit" CategoryProperty="Month" ValueProperty="Amount" Title="Profit" LineType="LineType.Dashed" />
+                    <RadzenColumnOptions Radius="5" />
+                    <RadzenValueAxis Formatter="@FormatAsDKK">
+                        <RadzenGridLines Visible="true" />
+                        <RadzenAxisTitle Text="Amount in DKK" />
+                    </RadzenValueAxis>
+                </RadzenChart>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@code {
+    private static int currentYear = DateTime.Today.Year;
+    private ICollection<string> colors = new List<string>() { "#FBC687", "#F4F7C5", "#93ABD3" };
+    private ICollection<YearlyItem> yearlyProfit;
+    private ICollection<YearlyItem> yearlyCumulativeProfit;
+    private List<HitRateModel> chartData;
+    private ThreeMonthsData profit;
+    bool showDataLabels = false;
+    string winProcentage = string.Empty;
+    decimal TotalProfit;
+    int TotalBetsPlayed;
+    private decimal TotalWager;
+    private decimal TotalRoi;
+
+
+
+
+
+
+
+
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        TotalProfit = await _dataService.GetTotalProfit();
+        TotalBetsPlayed = await _dataService.GetTotalBetsPlayed();
+        TotalWager = await _dataService.GetTotalWagers();
+        TotalRoi = await _dataService.GetTotalRoi();
+
+        profit = await _dataService.LoadLast3MonthsProfit();
+        yearlyProfit = await _dataService.LoadCurrentYearProfit();
+        yearlyCumulativeProfit = await _dataService.LoadCurrentCumulativeYearProfit();
+        chartData = await _dataService.GetWinPercentageChartDataAsync();
+        HitRateProcentage();
+
+        StateHasChanged();
+    }
+
+    private ICollection<string> doughnutFillColors = new List<string>() { "#ff6961", "#AACDBE" };
+    private ICollection<string> doughnutStrokeColor = new List<string>() { "#fdfeff" };
+
+
+    string FormatAsDKK(object value)
+    {
+        return ((double)value).ToString("C0", CultureInfo.CreateSpecificCulture("da-DK"));
+    }
+
+    private void HitRateProcentage()
+    {
+
+        double lostCount = 0;
+        double winCount = 0;
+
+        foreach (var item in chartData)
+        {
+            if (item.Label.Equals("Lost"))
+            {
+                lostCount = item.Value;
+            }
+            else
+            {
+                winCount = item.Value;
+            }
+        }
+
+        var totalPredictions = winCount + lostCount;
+        winProcentage = Math.Round((winCount / (totalPredictions) * 100)).ToString() + " %";
+    }
+}

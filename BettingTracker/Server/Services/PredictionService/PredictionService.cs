@@ -22,16 +22,6 @@ namespace BettingTracker.Server.Services.PredictionService
         {
             var prediction = new Prediction
             {
-                //HomeTeamId = predictionDto.HomeTeamId,
-                //AwayTeamId = predictionDto.AwayTeamId,
-                //UserId = predictionDto.UserId,
-                //PredictionTypeId = predictionDto.PredictionTypeId,
-                //KickOff = predictionDto.KickOff,
-                //Tip = predictionDto.Tip,
-                //Odds = predictionDto.Odds,
-                //Stake = predictionDto.Stake,
-                //Status = predictionDto.Status,
-
                 KickOff = predictionDto.KickOff,
                 LeagueId = predictionDto.LeagueId,
                 HomeTeam = predictionDto.HomeTeam,
@@ -40,11 +30,10 @@ namespace BettingTracker.Server.Services.PredictionService
                 Odds = predictionDto.Odds,
                 Stake = predictionDto.Stake,
                 Profit = PredictionCalculation.CalculateProfit(predictionDto.Status, predictionDto.Odds, predictionDto.Stake),
-                TeamToWin = PredictionCalculation.GetTeamToWin(predictionDto.Tip, predictionDto.HomeTeam, predictionDto.Stake),
+                TeamToWin = PredictionCalculation.GetTeamToWin(predictionDto.Tip, predictionDto.HomeTeam, predictionDto.AwayTeam),
                 Status = predictionDto.Status,
                 UserId = _authService.GetUserId(),
                 UserEmail = _authService.GetUserEmail()
-
             };
 
             _context.Predictions.Add(prediction);
@@ -89,6 +78,55 @@ namespace BettingTracker.Server.Services.PredictionService
             return predictions;
         }
 
+        public async Task<List<UserDto>> GetAllUsersWithProfitAsync()
+        {
+            var users = await _context.Users.Include(u => u.Predictions)
+                                .ThenInclude(p => p.League)
+                                .ToListAsync();
+
+            var usersWithProfit = users.Select(u =>
+            {
+                var validPredictions = u.Predictions.Where(p => decimal.TryParse(p.Stake, out _) && p.Status != "Pending");
+                decimal totalProfit = validPredictions.Sum(p => p.Profit);
+                decimal totalInvestment = validPredictions.Sum(p => decimal.Parse(p.Stake));
+                decimal roi = totalInvestment != 0 ? Math.Round(((totalProfit / totalInvestment) * 100), 1) : 0;
+
+                return new UserDto
+                {
+                    Id = u.Id,
+                    Email = u.Email,
+                    Profit = totalProfit,
+                    Roi = roi
+                };
+            })
+            .OrderByDescending(u => u.Profit)
+            .ToList();
+
+            return usersWithProfit;
+        }
+
+        public async Task<UserDto> GetUserByEmailAsync(string email)
+        {
+            var user = await _authService.GetUserByEmail(email);
+
+            if (user == null)
+            {
+                return null;
+            }
+
+            var predictions = await _context.Predictions
+                            .Where(p => p.UserId == user.Id)
+                            .Include(p => p.League)
+                            .ToListAsync();
+
+            return new UserDto
+            {
+                Id = user.Id,
+                Email = user.Email,
+                Profit = predictions.Sum(p => p.Profit)
+            };
+        }
+
         public async Task<Prediction> UpdatePrediction(int id, PredictionDto updatedPrediction)
         {
 
@@ -99,12 +137,7 @@ namespace BettingTracker.Server.Services.PredictionService
                 {
                     throw new Exception($"League with id {id} not found.");
                 }
-
                 // Update properties of the Prediction entity based on the values in the DTO
-                //predictionToUpdate.HomeTeamId = updatedPrediction.HomeTeamId;
-                //predictionToUpdate.AwayTeamId = updatedPrediction.AwayTeamId;
-                //predictionToUpdate.UserId = updatedPrediction.UserId;
-                //predictionToUpdate.PredictionTypeId = updatedPrediction.PredictionTypeId;
                 predictionToUpdate.KickOff = updatedPrediction.KickOff;
                 predictionToUpdate.LeagueId = updatedPrediction.LeagueId;
                 predictionToUpdate.HomeTeam = updatedPrediction.HomeTeam;

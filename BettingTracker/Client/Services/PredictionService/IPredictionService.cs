@@ -9,5 +9,7 @@ namespace BettingTracker.Client.Services.PredictionService
         Task<PredictionDto> CreatePrediction(PredictionDto predictionDto);
         Task<PredictionDto?> UpdatePrediction(int id, PredictionDto predictionDto);
         Task <PredictionDto?>DeletePrediction(int id);
+        Task<List<UserDto>> GetTopUsersByProfit();
+        Task<UserDto> GetUserByEmail(string email);
     }
 }

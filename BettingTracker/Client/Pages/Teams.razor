@@ -1,0 +1,53 @@
+﻿@page "/teams"
+@inherits TeamsBase
+
+<body>
+<h3>Teams</h3>
+
+@if (Teams == null && ErrorMessage == null)
+{
+    <DisplaySpinner />
+}
+else if (ErrorMessage != null)
+{
+    <DisplayError ErrorMessage="@ErrorMessage"></DisplayError>
+}
+else
+{
+    var groupedTeams = Teams.GroupBy(t => t.LeagueName);
+    foreach (var group in groupedTeams)
+    {
+        <h3 class="table-header">@group.Key</h3>
+        <div class="table-container">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>League</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var team in group)
+                    {
+                        <tr>
+                            <td>@team.Name</td>
+                            <td>@team.LeagueName</td>
+                            <td>
+                                <button class="btn btn-primary"
+                            @onclick="(() => ShowTeam_Click(team.Id))">
+                                    <i class="oi oi-pencil"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+    <button class="btn btn-primary"
+        @onclick="(() => CreateNewTeam_Click())">
+        Create Team
+    </button>
+}
+</body>

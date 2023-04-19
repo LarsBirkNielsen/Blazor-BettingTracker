@@ -1,8 +1,6 @@
 ﻿using BettingTracker.Models.Dtos;
-using BettingTracker.Server.Data;
 using BettingTracker.Server.Extensions;
 using BettingTracker.Server.Services.LeagueService;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BettingTracker.Server.Controllers
@@ -75,7 +73,7 @@ namespace BettingTracker.Server.Controllers
                 }
                 else
                 {
-                    var leagueDto = leagues.ConvertToDto();
+                    var leagueDto = leagues.ConvertFromDbToDto();
 
                     return Ok(leagueDto);
                 }

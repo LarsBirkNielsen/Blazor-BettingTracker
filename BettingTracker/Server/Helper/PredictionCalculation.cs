@@ -25,13 +25,19 @@
 
         public static string GetTeamToWin(string tip, string homeTeam, string awayTeam)
         {
-            if(tip == "1")
+            switch (tip)
             {
-                return homeTeam;
-            }
-            else
-            {
-                return awayTeam;
+                case "1":
+                case "1x":
+                    return homeTeam;
+                case "2":
+                case "x2":
+                    return awayTeam;
+                case "x":
+                case "X":
+                    return "No Team";
+                default:
+                    return default;
             }
         }
     }

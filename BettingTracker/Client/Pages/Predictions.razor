@@ -1,61 +1,71 @@
 ﻿@page "/predictions"
+@using BettingTracker.Client.Helper
 @inherits PredictionsBase
 
 <body>
-
     @if (Predictions == null)
     {
         <span>Loading Predictions...</span>
     }
     else
     {
-        <div class="table-container">
-
-            <table class="table ">
-                <thead>
-                    <tr>
-                        <th>Kick Off</th>
-                        <th>League</th>
-                        <th>Home Team</th>
-                        <th>Away Team</th>
-                        <th>Odds</th>
-                        <th>Tip</th>
-                        <th>Stake</th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var prediction in Predictions)
-                    {
+        var groupedPredictions = Predictions.Where(p => p.Status.Equals("Pending")).GroupBy(p => p.KickOff.Date);
+        foreach (var group in groupedPredictions)
+        {
+            <h3 class="table-header">@group.Key.ToString("dd. MMMM, yyyy")</h3>
+            <div class="table-container">
+                <table class="table">
+                    <thead>
                         <tr>
-                            <td class="center">@prediction.KickOff.ToShortDateString()</td>
-                            <td>@prediction.LeagueName</td>
-                            <td>@prediction.HomeTeam</td>
-                            <td>@prediction.AwayTeam</td>
-                            <td>@prediction.Odds</td>
-                            <td>@prediction.Tip</td>
-                            <td>@prediction.Stake</td>
-                            <td>
-                                <button class="btn btn-primary-edit"
-                                @onclick="(() => ShowPrediction_Click(prediction.Id))">
-                                    <ion-icon class="oi" name="create-outline"></ion-icon>
-                                </button>
-                                <button class="btn btn-primary-edit"
-                                @onclick="(() => DeletePredictionClick(prediction.Id))">
-                                    <ion-icon class="oi " name="trash-outline" aria-hidden="true"></ion-icon>
-                                </button>
-                            </td>
+                            <th>Kick Off</th>
+                            <th>League</th>
+                            <th>Match</th>
+@*                            <th>Home Team</th>
+                            <th>Away Team</th>*@
+                            <th>Odds</th>
+                            <th>Tip</th>
+                            <th>Stake</th>
+                            <th></th>
                         </tr>
-                    }
-                </tbody>
-            </table>
-            <button class="btn my-btn-primary"
-                @onclick="(() => CreateNewPrediction_Click())">
-                Create Prediction
-            </button>
-        </div>
+                    </thead>
+                    <tbody>
+                        @foreach (var prediction in group)
+                        {
+                            <tr>
+                                <td class="center">@prediction.KickOff.ToString("HH:mm")</td>
+                                <td class="table-cell">@prediction.LeagueName</td>
+                                <td class="table-cell">@prediction.HomeTeam - @prediction.AwayTeam</td>
+                                <td class="table-cell">@prediction.Odds</td>
+                                <td class="table-cell">@prediction.Tip</td>
+                                <td class="table-cell">@prediction.Stake</td>
+                                <td class="action-cell">
+                                    @if (!PredictionHelper.HasMatchBeenPlayed(prediction.KickOff))
+                                    {
+                                        <button class="btn btn-primary-edit"
+                                @onclick="(() => ShowPrediction_Click(prediction.Id))">
+                                            <ion-icon class="oi" name="create-outline"></ion-icon>
+                                        </button>
+                                        <button class="btn btn-primary-edit"
+                                @onclick="(() => DeletePredictionClick(prediction.Id))">
+                                            <ion-icon class="oi " name="trash-outline" aria-hidden="true"></ion-icon>
+                                        </button>
+                                    }
+                                    else
+                                    {
+                                        <div class="empty-icon"></div>
+                                    }
+                                </td>
+
+
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+        <button class="btn my-btn-primary"
+            @onclick="(() => CreateNewPrediction_Click())">
+            Create Prediction
+        </button>
     }
 </body>
-
-
-

@@ -1,0 +1,70 @@
+﻿@page "/admin/import-predictions"
+@using BettingTracker.Client.Services.Import
+@using BettingTracker.Models.Dtos
+@inject IImportService ImportService
+@attribute [Authorize(Roles = "Admin")]
+
+<h3>Update Predictions</h3>
+
+<InputFile OnChange="@OnFileSelected" />
+
+<p>@_message</p>
+
+@if (_updatedPredictions != null && _updatedPredictions.Count > 0)
+{
+    <button class="btn btn-primary" @onclick="ClearData">Reset</button>
+}
+
+@if (_updatedPredictions != null)
+{
+    <h4>Updated Predictions</h4>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>HomeTeam</th>
+                <th>AwayTeam</th>
+                <th>Tip</th>
+                <th>Status</th>
+                <th>Profit</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var prediction in _updatedPredictions)
+            {
+                <tr>
+                    <td>@prediction.HomeTeam</td>
+                    <td>@prediction.AwayTeam</td>
+                    <td>@prediction.Tip</td>
+                    <td>@prediction.Status</td>
+                    <td>@prediction.Profit</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private string _message;
+    private List<PredictionDto> _updatedPredictions;
+
+    private async Task OnFileSelected(InputFileChangeEventArgs e)
+    {
+        _updatedPredictions = null;
+
+        try
+        {
+            _updatedPredictions = await ImportService.UpdatePendingPredictionsAsync(e.File);
+            _message = "Predictions updated successfully.";
+        }
+        catch (Exception ex)
+        {
+            _message = "Error updating predictions: " + ex.Message;
+        }
+    }
+
+    private void ClearData()
+    {
+        _updatedPredictions = new List<PredictionDto>();
+        _message = "";
+    }
+}

@@ -26,8 +26,7 @@ public class PredictionController : ControllerBase
     {
         try
         {
-            var userId =  _authService.GetUserId();
-            Console.WriteLine("UserId " + userId);
+            var userId = _authService.GetUserId();
             var predicitons = await _predictionService.GetPredictions(userId);
 
 
@@ -122,6 +121,45 @@ public class PredictionController : ControllerBase
             }
             return Ok(prediction);
 
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+        }
+    }
+
+    [HttpGet]
+    [Route("/high-score")]
+    public async Task<ActionResult<List<UserDto>>> GetTopProfitableUsers()
+    {
+        try
+        {
+            var topProfitableUsers = await _predictionService.GetAllUsersWithProfitAsync();
+            if (topProfitableUsers == null)
+            {
+                return NotFound();
+            }
+            return Ok(topProfitableUsers);
+
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+        }
+    }
+
+    [HttpGet]
+    [Route("/user/{email}")]
+    public async Task<ActionResult<UserDto>> GetUserByEmail(string email)
+    {
+        try
+        {
+            var user = await _predictionService.GetUserByEmailAsync(email);
+            if (user == null)
+            {
+                return NotFound();
+            }
+            return Ok(user);
         }
         catch (Exception ex)
         {

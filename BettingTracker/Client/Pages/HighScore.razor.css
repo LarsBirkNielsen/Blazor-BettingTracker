@@ -1,0 +1,23 @@
+﻿body {
+    //background-color: #d8e3e8;
+    min-height: 100vh;
+    padding: 2.5rem 5.5rem;
+}
+
+.table-container {
+    padding: 2rem 3rem;
+}
+
+.table tbody tr:hover td, .table-hover tbody tr:hover th,
+.table tbody tr:hover button {
+    background-color: #547793;
+    color: white;
+}
+
+    .table tbody tr:hover button .oi {
+        color: white;
+    }
+
+.highlight-row {
+    background-color: #ffd700;
+}

@@ -1,4 +1,5 @@
-﻿using BettingTracker.Client.Services.LeagueService;
+﻿using BettingTracker.Client.Services.AuthService;
+using BettingTracker.Client.Services.LeagueService;
 using BettingTracker.Client.Services.PredictionService;
 using BettingTracker.Models.Dtos;
 using Microsoft.AspNetCore.Components;
@@ -9,10 +10,12 @@ namespace BettingTracker.Client.Pages
     {
         [Inject]
         public IPredictionService PredictionService { get; set; }
+        [Inject]
+        public IAuthService AuthService { get; set; }
 
         [Inject]
         public IManagePredictionsLocalStorageService ManagePredictionsLocalStorageService { get; set; }
-        public IManageLeaguesLocalStorageService ManageLeaguesLocalStorageService { get; set; }
+        public IManageTeamsLocalStorageService ManageLeaguesLocalStorageService { get; set; }
         [Inject]
         public ILeagueService LeagueService { get; set; }
 
@@ -22,7 +25,9 @@ namespace BettingTracker.Client.Pages
 
         public IList<UserDto> Predictions { get; set; }
         public string ErrorMessage { get; set; }
-        private string returnUrl = string.Empty;
+
+        protected string CurrentUserEmail { get; set; }
+        public int? CurrentUserPosition { get; set; }
 
 
         protected override async Task OnInitializedAsync()
@@ -30,20 +35,19 @@ namespace BettingTracker.Client.Pages
             try
             {
                 await ClearLocalStorage();
+                var allUsersByProfit = await PredictionService.GetTopUsersByProfit();
+                Predictions = allUsersByProfit.Take(10).ToList();
+                CurrentUserEmail = await AuthService.GetUserEmail();
 
-                Predictions = await PredictionService.GetTopUsersByProfit();
-                Console.WriteLine("Predictions Client " + Predictions.Count());
+                // Calculate current user position
+                CurrentUserPosition = allUsersByProfit.FindIndex(u => u.Email.Equals(CurrentUserEmail, StringComparison.OrdinalIgnoreCase)) + 1;
+
             }
             catch (Exception ex)
             {
                 ErrorMessage = ex.Message;
 
             }
-        }
-
-        protected void ShowPrediction_Click(int id)
-        {
-            NavigationManager.NavigateTo($"prediction/{id}");
         }
 
         protected void CreateNewPrediction_Click()
@@ -54,18 +58,6 @@ namespace BettingTracker.Client.Pages
         private async Task ClearLocalStorage()
         {
             await ManagePredictionsLocalStorageService.RemoveCollection();
-        }
-        protected async Task DeletePredictionClick(int id)
-        {
-            await PredictionService.DeletePrediction(id);
-            var deletedPrediction = Predictions.FirstOrDefault(p => p.Id == id);
-            if (deletedPrediction != null)
-            {
-                var predictionsList = Predictions.ToList();
-                predictionsList.Remove(deletedPrediction);
-                Predictions = predictionsList;
-            }
-            NavigationManager.NavigateTo("/predictions");
         }
     }
 }

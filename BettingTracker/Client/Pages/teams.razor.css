@@ -1,0 +1,14 @@
+﻿body {
+
+    padding: 2.5rem 5.5rem;
+}
+
+.table-container table {
+    width: 100%;
+}
+
+.table-container th,
+.table-container td {
+    width: 33.33%;
+    text-align: left;
+}

@@ -8,4 +8,5 @@ public class Team
     public string Name { get; set; }
     public int LeagueId { get; set; }
     public League League { get; set; }
+    public bool IsCurrentInLeague { get; set; }
 }

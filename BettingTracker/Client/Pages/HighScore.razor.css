@@ -17,3 +17,7 @@
     .table tbody tr:hover button .oi {
         color: white;
     }
+
+.highlight-row {
+    background-color: #ffd700;
+}

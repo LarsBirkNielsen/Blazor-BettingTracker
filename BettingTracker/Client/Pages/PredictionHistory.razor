@@ -22,7 +22,6 @@
                         <th>Stake</th>
                         <th>Profit</th>
                         <th>Status</th>
-                        <th></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -37,16 +36,6 @@
                             <td>@prediction.Stake</td>
                             <td>@prediction.Profit Kr.</td>
                             <td>@prediction.Status</td>
-                            <td>
-                                <button class="btn btn-primary-edit"
-                                @onclick="(() => ShowPrediction_Click(prediction.Id))">
-                                    <ion-icon class="oi" name="create-outline"></ion-icon>
-                                </button>
-                                <button class="btn btn-primary-edit"
-                                @onclick="(() => DeletePredictionClick(prediction.Id))">
-                                    <ion-icon class="oi " name="trash-outline" aria-hidden="true"></ion-icon>
-                                </button>
-                            </td>
                         </tr>
                     }
                 </tbody>

@@ -132,7 +132,6 @@ namespace BettingTracker.Client.Services.PredictionService
                 if (response.IsSuccessStatusCode)
                 {
                     var result = await response.Content.ReadFromJsonAsync<List<UserDto>>();
-                    Console.WriteLine(result);
                     return result;
                 }
                 else if (response.StatusCode == HttpStatusCode.NotFound)
@@ -151,6 +150,17 @@ namespace BettingTracker.Client.Services.PredictionService
             }
         }
 
+        public async Task<UserDto> GetUserByEmail(string email)
+        {
+            var response = await _httpClient.GetAsync($"user/{email}");
+
+            if (response.IsSuccessStatusCode)
+            {
+                return await response.Content.ReadFromJsonAsync<UserDto>();
+            }
+
+            return null;
+        }
 
         public async Task<PredictionDto?> UpdatePrediction(int predictionId, PredictionDto predictionDto)
             {

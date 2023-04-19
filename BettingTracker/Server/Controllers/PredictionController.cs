@@ -27,7 +27,6 @@ public class PredictionController : ControllerBase
         try
         {
             var userId = _authService.GetUserId();
-            Console.WriteLine("UserId " + userId);
             var predicitons = await _predictionService.GetPredictions(userId);
 
 
@@ -135,13 +134,32 @@ public class PredictionController : ControllerBase
     {
         try
         {
-            var topProfitableUsers = await _predictionService.GetTopProfitableUsersAsync();
+            var topProfitableUsers = await _predictionService.GetAllUsersWithProfitAsync();
             if (topProfitableUsers == null)
             {
                 return NotFound();
             }
             return Ok(topProfitableUsers);
 
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+        }
+    }
+
+    [HttpGet]
+    [Route("/user/{email}")]
+    public async Task<ActionResult<UserDto>> GetUserByEmail(string email)
+    {
+        try
+        {
+            var user = await _predictionService.GetUserByEmailAsync(email);
+            if (user == null)
+            {
+                return NotFound();
+            }
+            return Ok(user);
         }
         catch (Exception ex)
         {

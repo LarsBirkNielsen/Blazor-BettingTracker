@@ -1,0 +1,70 @@
+﻿body {
+}
+
+
+.margin-b{
+    margin-bottom: 1rem;
+}
+
+.test{
+    height: 22.5rem;
+}
+
+.rz-donut-content {
+    font-size: xx-large;
+    color: #547793;
+}
+
+.top-card-header-text-color {
+    color: #547793;
+}
+
+.top-card-sub-header-text-color {
+    color: #AACDBE;
+    font-size: 1.2rem;
+}
+
+.top-table {
+    margin-top: 0.5rem;
+    margin-bottom: 0.1rem;
+}
+
+
+table, th, td {
+    border: none;
+    margin-left: 1.5rem;
+}
+th {
+    font-weight: 800 !important;
+    color: #547793;
+}
+
+.good-team {
+    color:#AACDBE;
+    font-size:medium;
+}
+
+.bad-team {
+    color: #ff6961;
+    font-size: medium;
+}
+
+.card-body .top-card-icon {
+    height: 2.8rem;
+    width: 2.8rem;
+    color: #547793;
+    margin-right: 1rem;
+}
+
+.bad-team ion-icon.lost-icon {
+    font-size: large;
+    color: #ff6961;
+}
+
+.good-team ion-icon.win-icon {
+    font-size: large;
+    color:#AACDBE;
+}
+
+
+

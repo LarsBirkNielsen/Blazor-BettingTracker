@@ -13,7 +13,7 @@ namespace BettingTracker.Client.Pages
 
         [Inject]
         public IManagePredictionsLocalStorageService ManagePredictionsLocalStorageService { get; set; }
-        public IManageLeaguesLocalStorageService ManageLeaguesLocalStorageService { get; set; }
+        public IManageTeamsLocalStorageService ManageLeaguesLocalStorageService { get; set; }
         [Inject]
         public ILeagueService LeagueService { get; set; }
 
@@ -23,7 +23,6 @@ namespace BettingTracker.Client.Pages
 
         public IEnumerable<PredictionDto> Predictions { get; set; }
         public string ErrorMessage { get; set; }
-        private string returnUrl = string.Empty;
 
 
         protected override async Task OnInitializedAsync()

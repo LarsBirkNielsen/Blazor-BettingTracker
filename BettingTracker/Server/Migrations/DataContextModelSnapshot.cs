@@ -176,6 +176,9 @@ namespace BettingTracker.Server.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
+                    b.Property<bool>("IsCurrentInLeague")
+                        .HasColumnType("bit");
+
                     b.Property<int>("LeagueId")
                         .HasColumnType("int");
 
@@ -193,24 +196,28 @@ namespace BettingTracker.Server.Migrations
                         new
                         {
                             Id = 1,
+                            IsCurrentInLeague = false,
                             LeagueId = 3,
                             Name = "Real Madrid"
                         },
                         new
                         {
                             Id = 2,
+                            IsCurrentInLeague = false,
                             LeagueId = 3,
                             Name = "Barcelona"
                         },
                         new
                         {
                             Id = 3,
+                            IsCurrentInLeague = false,
                             LeagueId = 2,
-                            Name = "Manchester City"
+                            Name = "Man City"
                         },
                         new
                         {
                             Id = 4,
+                            IsCurrentInLeague = false,
                             LeagueId = 2,
                             Name = "Liverpool"
                         });
@@ -274,12 +281,17 @@ namespace BettingTracker.Server.Migrations
             modelBuilder.Entity("BettingTracker.Server.Entities.Team", b =>
                 {
                     b.HasOne("BettingTracker.Server.Entities.League", "League")
-                        .WithMany()
+                        .WithMany("Teams")
                         .HasForeignKey("LeagueId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("League");
+                });
+
+            modelBuilder.Entity("BettingTracker.Server.Entities.League", b =>
+                {
+                    b.Navigation("Teams");
                 });
 
             modelBuilder.Entity("BettingTracker.Server.Entities.PredictionType", b =>

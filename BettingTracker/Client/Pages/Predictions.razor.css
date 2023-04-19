@@ -20,3 +20,17 @@
 td {
     vertical-align: middle;
 }
+
+.empty-icon{
+    min-height: 2.38rem;
+}
+
+.table-container table {
+    width: 100%;
+}
+
+.table-container th,
+.table-container td {
+    width: 10%;
+    text-align: left;
+}

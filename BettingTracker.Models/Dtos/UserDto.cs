@@ -12,6 +12,5 @@ namespace BettingTracker.Models.Dtos
         public string Email { get; set; } = string.Empty;
         public decimal Profit { get; set; }
         public decimal Roi { get; set; }
-        public int Rank { get; set; }
     }
 }

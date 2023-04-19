@@ -11,5 +11,7 @@ public class TeamDto
     public int Id { get; set; } 
     public string Name { get; set; } = String.Empty;
     public int LeagueId { get; set; } = 1;
-    public string LeagueName { get; set; } = string.Empty;
+    public string LeagueName { get; set; } = String.Empty;
+    public bool IsCurrentInLeague { get; set; }
+
 }

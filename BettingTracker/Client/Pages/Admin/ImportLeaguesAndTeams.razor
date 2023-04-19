@@ -1,0 +1,79 @@
+﻿@page "/admin/import-season"
+@using BettingTracker.Client.Services.Import
+@using BettingTracker.Models.Dtos
+@using Microsoft.AspNetCore.Components.Forms
+@inject IImportService ImportService
+@attribute [Authorize(Roles = "Admin")]
+
+<h3>Import Leagues & Teams To Database</h3>
+<InputFile OnChange="HandleFileSelected" />
+<br />
+<p>@_message</p>
+@if (_excelLeagues != null && _excelLeagues.Count > 0)
+{
+    <button class="btn btn-primary" @onclick="ClearData">Reset</button>
+}
+
+@if (_excelLeagues != null)
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>League</th>
+                <th>Teams In League</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var league in _excelLeagues)
+            {
+                <tr>
+                    <td>@league.Name</td>
+                    <td>
+                        @if (league.Teams.Any())
+                        {
+                            <ul>
+                                @foreach (var team in league.Teams)
+                                {
+                                    <li>@team.Name</li>
+                                }
+                            </ul>
+                        }
+                        else
+                        {
+                            <span>No teams in this league</span>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private string _message = "";
+    private List<LeagueDto> _excelLeagues;
+
+    private async Task HandleFileSelected(InputFileChangeEventArgs e)
+    {
+        _excelLeagues = null;
+
+
+        using var fileStream = e.File.OpenReadStream();
+        var (response, leagues) = await ImportService.UploadFileAsync(fileStream, e.File.Name);
+
+        if (response.IsSuccessStatusCode)
+        {
+            _message = "File imported successfully.";
+            _excelLeagues = leagues;
+        }
+        else
+        {
+            _message = "Error importing file: " + response.ReasonPhrase;
+        }
+    }
+    private void ClearData()
+    {
+        _excelLeagues = new List<LeagueDto>();
+        _message = "";
+    }
+}

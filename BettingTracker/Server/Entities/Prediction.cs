@@ -10,7 +10,7 @@ public class Prediction
     public int Id { get; set; }
 
     [Required]
-    [DisplayFormat(DataFormatString = "{0:dd/MM-yyyy}")]
+    [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy HH:mm}")]
     [DisplayName("Kick Off")]
     public DateTime KickOff { get; set; } = DateTime.Now.Date;
 

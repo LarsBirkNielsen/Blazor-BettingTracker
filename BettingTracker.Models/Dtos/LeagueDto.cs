@@ -8,7 +8,8 @@ namespace BettingTracker.Models.Dtos;
 
 public class LeagueDto
 {
-    public int Id { get; set; } 
+    public int Id { get; set; }
     public string Name { get; set; } = String.Empty;
     public string Country { get; set; } = String.Empty;
+    public ICollection<TeamDto> Teams { get; set; }
 }

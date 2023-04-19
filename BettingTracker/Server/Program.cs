@@ -1,16 +1,13 @@
-using BettingTracker.Server.Services.AuthService;
 using BettingTracker.Server.Data;
-using BettingTracker.Server.Services.LeagueService;
+using BettingTracker.Server.Services.AuthService;
 using BettingTracker.Server.Services.PredictionService;
+using BettingTracker.Server.Services.TeamService;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.Net.Http.Headers;
+using BettingTracker.Server.Services.ImportService;
+using BettingTracker.Server.Services.LeagueService;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,8 +18,10 @@ builder.Services.AddDbContext<DataContext>(options =>
 
 //My Services
 builder.Services.AddScoped<IAuthService, AuthService>();
-builder.Services.AddScoped<ITeamService, LeagueService>();
+builder.Services.AddScoped<ITeamService, TeamService>();
 builder.Services.AddScoped<IPredictionService, PredictionService>();
+builder.Services.AddScoped<IImportService, ImportService>();
+builder.Services.AddScoped<ILeagueService, LeagueService>();
 
 
 //My Bearer token Service

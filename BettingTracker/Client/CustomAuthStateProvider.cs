@@ -4,7 +4,7 @@ using System.Net.Http.Headers;
 using System.Security.Claims;
 using System.Text.Json;
 
-namespace BlazorEcommerce.Client
+namespace BettingTracker.Client
 {
     public class CustomAuthStateProvider : AuthenticationStateProvider
     {

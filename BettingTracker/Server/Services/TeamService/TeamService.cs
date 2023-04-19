@@ -1,9 +1,10 @@
 ﻿using BettingTracker.Models.Dtos;
 using BettingTracker.Server.Data;
 using BettingTracker.Server.Entities;
-using BettingTracker.Server.Extensions;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace BettingTracker.Server.Services.TeamService
 {
@@ -11,90 +12,79 @@ namespace BettingTracker.Server.Services.TeamService
     {
         private readonly DataContext _context;
 
-        public TeamService(DataContext context)
+        public TeamService(DataContext dbContext)
         {
-            _context = context;
+            _context = dbContext;
         }
 
-        public async Task<Team> CreateTeam(TeamDto teamDto)
+        public async Task<Team> CreateTeamAsync(TeamDto teamDto)
         {
-            var existingTeam = await _context.Leagues
-                .SingleOrDefaultAsync(league => league.Id == teamDto.Id);
-
-            if (existingTeam != null)
+            var team = new Team
             {
-                throw new ArgumentException("A team with the same ID already exists", nameof(teamDto));
-            }
-
-            var league = new Team
-            {
-                Id = teamDto.Id,
                 Name = teamDto.Name,
-                Country = leagueDto.Country
+                LeagueId = teamDto.LeagueId
             };
 
-            await _context.Leagues.AddAsync(league);
+            _context.Teams.Add(team);
             await _context.SaveChangesAsync();
 
-            return league;
+            return team;
         }
 
-        public async Task<bool> DeleteLeague(int leagueId)
+        public async Task<bool> DeleteTeamAsync(int teamId)
         {
-            var dbLeague = await GetLeagueById(leagueId);
-            if (dbLeague == null)
+            var team = await _context.Teams.FindAsync(teamId);
+
+            if (team == null)
             {
                 return false;
             }
-            else
-            {
-                _context.Remove(dbLeague);
-                await _context.SaveChangesAsync();
-                return true;
-            }
+
+            _context.Teams.Remove(team);
+            await _context.SaveChangesAsync();
+
+            return true;
         }
 
-
-        public async Task<League> GetLeagueById(int leagueId)
+        public async Task<Team> GetTeamById(int teamId)
         {
-            var dbLeague = await _context.Leagues.FindAsync(leagueId);
-
-            if (dbLeague != null)
-            {
-                return dbLeague;
-            }
-
-            return null;
+            return await _context.Teams.FindAsync(teamId);
         }
 
-        public async Task<List<League>> GetLeagues()
+        public async Task<List<Team>> GetTeamsAsync(int? leagueId = null)
         {
-            return await _context.Leagues.ToListAsync();
+            IQueryable<Team> teams = _context.Teams.Include(team => team.League);
+
+            if (leagueId.HasValue)
+            {
+                teams = teams.Where(team => team.LeagueId == leagueId.Value);
+            }
+            return await teams.ToListAsync();
+            //else
+            //{
+            //    return await _context.Teams.ToListAsync();
+            //}
         }
 
-        public async Task<League> UpdateLeague(int id, LeagueDto updatedLeague)
+        public async Task<List<Team>> GetTeamsByLeagueId(int leagueId)
         {
-            try
+            return await _context.Teams.Where(t => t.LeagueId == leagueId && t.IsCurrentInLeague == true).ToListAsync();
+        }
+
+        public async Task<Team> UpdateTeamAsync(int teamId, TeamDto teamDto)
+        {
+            var team = await _context.Teams.FindAsync(teamId);
+
+            if (team == null)
             {
-                var leagueToUpdate = await _context.Leagues.FindAsync(id);
-                if (leagueToUpdate == null)
-                {
-                    throw new Exception($"League with id {id} not found.");
-                }
-
-                leagueToUpdate.Name = updatedLeague.Name;
-                leagueToUpdate.Country = updatedLeague.Country;
-
-                _context.Entry(leagueToUpdate).State = EntityState.Modified;
-                await _context.SaveChangesAsync();
-
-                return leagueToUpdate;
+                return null;
             }
-            catch (Exception)
-            {
-                // Log exception
-                throw;
-            }
+
+            team.Name = teamDto.Name;
+
+            await _context.SaveChangesAsync();
+
+            return team;
         }
     }
 }

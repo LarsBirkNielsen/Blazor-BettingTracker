@@ -1,18 +1,37 @@
 ﻿using BettingTracker.Models.Dtos;
 using BettingTracker.Server.Entities;
+using System.ComponentModel;
+using System.Data;
 
 namespace BettingTracker.Server.Extensions
 {
     public static class DtoConversion
     {
 
-        public static IEnumerable<LeagueDto> ConvertToDto(this IEnumerable<League> leagues)
+        public static IEnumerable<LeagueDto> ConvertFromDbToDto(this IEnumerable<League> leagues)
         {
             var result = leagues.Select(league => new LeagueDto
             {
                 Id = league.Id,
                 Name = league.Name,
                 Country = league.Country
+            }).ToList();
+            return result;
+        }
+
+        public static List<LeagueDto> ConvertToDto(this List<League> leagues)
+        {
+            var result = leagues.Select(league => new LeagueDto
+            {
+                Id = league.Id,
+                Name = league.Name,
+                Country = league.Country,
+                Teams = league.Teams.Select(team => new TeamDto
+                {
+                    Id = team.Id,
+                    Name = team.Name,
+                    IsCurrentInLeague = team.IsCurrentInLeague
+                }).ToList()
             }).ToList();
             return result;
         }
@@ -24,6 +43,22 @@ namespace BettingTracker.Server.Extensions
                 Id = league.Id,
                 Name = league.Name,
                 Country = league.Country
+            };
+        }
+
+        public static TeamDto ConvertToDto(this Team team)
+        {
+            if (team == null)
+            {
+                return null;
+            }
+
+            return new TeamDto
+            {
+                Id = team.Id,
+                Name = team.Name,
+                LeagueId = team.LeagueId,
+                LeagueName = team.League?.Name
             };
         }
 
@@ -59,7 +94,7 @@ namespace BettingTracker.Server.Extensions
                 Stake = prediction.Stake,
                 Profit = prediction.Profit,
                 Status = prediction.Status
-                
+
 
             }).ToList();
 
@@ -100,6 +135,27 @@ namespace BettingTracker.Server.Extensions
                 });
             }
             return result;
+        }
+
+        public static DataTable ConvertListToDataTable<T>(this IList<T> data)
+        {
+            PropertyDescriptorCollection props = TypeDescriptor.GetProperties(typeof(T));
+            DataTable table = new DataTable();
+            for (int i = 0; i < data.Count; i++)
+            {
+                PropertyDescriptor prop = props[i];
+                table.Columns.Add(prop.Name, prop.PropertyType);
+            }
+            object[] values = new object[props.Count];
+            foreach (T item in data)
+            {
+                for(int i = 0; i < values.Length; i++)
+                {
+                    values[i] = props[i].GetValue(item);
+                }
+                table.Rows.Add(values);
+            }
+            return table;
         }
     }
 }

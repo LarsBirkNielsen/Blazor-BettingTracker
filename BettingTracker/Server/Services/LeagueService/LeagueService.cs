@@ -1,4 +1,5 @@
-﻿using BettingTracker.Models.Dtos;
+﻿using BettingTracker.Client.Services.LeagueService;
+using BettingTracker.Models.Dtos;
 using BettingTracker.Server.Data;
 using BettingTracker.Server.Entities;
 using BettingTracker.Server.Extensions;
@@ -7,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BettingTracker.Server.Services.LeagueService
 {
-    public class LeagueService : ITeamService
+    public class LeagueService : ILeagueService
     {
         private readonly DataContext _context;
 

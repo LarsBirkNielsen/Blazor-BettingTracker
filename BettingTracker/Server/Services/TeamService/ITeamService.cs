@@ -5,10 +5,11 @@ namespace BettingTracker.Server.Services.TeamService
 {
     public interface ITeamService
     {
-        Task<League?> GetTeamById(int teamId);
-        Task<List<League>> GetTeams();
-        Task<League> CreateTeam(TeamDto team);
-        Task<League?> UpdateTeam(int lteamId, TeamDto team);
-        Task<bool> DeleteTeam(int teamId);
+        Task<List<Team>> GetTeamsAsync(int? leagueId = null);
+        Task<Team> GetTeamById(int teamId);
+        Task<Team> CreateTeamAsync(TeamDto teamDto);
+        Task<Team> UpdateTeamAsync(int teamId, TeamDto teamDto);
+        Task<bool> DeleteTeamAsync(int teamId);
+        Task<List<Team>> GetTeamsByLeagueId(int leagueId);
     }
 }

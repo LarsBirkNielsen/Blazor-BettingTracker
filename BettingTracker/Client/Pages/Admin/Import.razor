@@ -1,0 +1,193 @@
+﻿@page "/admin/import-data"
+@using BettingTracker.Client.Services.Import
+@using BettingTracker.Models.Dtos
+@using Microsoft.AspNetCore.Components.Forms
+@inject IImportService ImportService
+@attribute [Authorize(Roles = "Admin")]
+
+<body>
+    <div class="row">
+        <div class="col-md-12 text-center">
+            <div class="heading-container">
+                <h3>Import Leagues, Teams, and Predictions</h3>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-1 adjust-for-sidebar"></div>
+        <div class="col-md-4">
+            <h4>Import Leagues & Teams To Database</h4>
+            <div class="mx-auto">
+                <InputFile OnChange="@(e => HandleFileSelected(e, "leagues"))" />
+            </div>
+        </div>
+        <div class="col-md-2"></div>
+        <div class="col-md-4">
+            <h4>Update Predictions</h4>
+            <div class="mx-auto">
+                <InputFile OnChange="@(e => HandleFileSelected(e, "predictions"))" />
+            </div>
+        </div>
+        <div class="col-md-1"></div>
+    </div>
+
+    <br />
+    <p>@_message</p>
+    @if ((_excelLeagues != null && _excelLeagues.Count > 0) || (_updatedPredictions != null && _updatedPredictions.Count > 0))
+    {
+        <button class="btn btn-primary" @onclick="ClearData">Reset</button>
+    }
+
+    @if (_excelLeagues != null)
+    {
+        <h4>Leagues and Teams</h4>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>League</th>
+                    <th>Teams In League</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var league in _excelLeagues)
+                {
+                    <tr>
+                        <td>@league.Name</td>
+                        <td>
+                            @if (league.Teams.Any())
+                            {
+                                <ul>
+                                    @foreach (var team in league.Teams)
+                                    {
+                                        <li>@team.Name</li>
+                                    }
+                                </ul>
+                            }
+                            else
+                            {
+                                <span>No teams in this league</span>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+
+    @if (_updatedPredictions != null)
+    {
+        <h4>Updated Predictions</h4>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>HomeTeam</th>
+                    <th>AwayTeam</th>
+                    <th>Tip</th>
+                    <th>Status</th>
+                    <th>Profit</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var prediction in _updatedPredictions)
+                {
+                    <tr>
+                        <td>@prediction.HomeTeam</td>
+                        <td>@prediction.AwayTeam</td>
+                        <td>@prediction.Tip</td>
+                        <td>@prediction.Status</td>
+                        <td>@prediction.Profit</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</body>
+@code {
+
+    private string _message;
+    private List<PredictionDto> _updatedPredictions;
+    private List<LeagueDto> _excelLeagues;
+
+    //private async Task OnFileSelected(InputFileChangeEventArgs e)
+    //{
+    //    _updatedPredictions = null;
+
+    //    try
+    //    {
+    //        _updatedPredictions = await ImportService.UpdatePendingPredictionsAsync(e.File);
+    //        _message = "Predictions updated successfully.";
+    //    }
+    //    catch (Exception ex)
+    //    {
+    //        _message = "Error updating predictions: " + ex.Message;
+    //    }
+    //}
+
+    //private void ClearData()
+    //{
+    //    _updatedPredictions = new List<PredictionDto>();
+    //    _message = "";
+    //}
+
+
+    //private async Task HandleFileSelected(InputFileChangeEventArgs e)
+    //{
+    //    _excelLeagues = null;
+
+
+    //    using var fileStream = e.File.OpenReadStream();
+    //    var (response, leagues) = await ImportService.UploadFileAsync(fileStream, e.File.Name);
+
+    //    if (response.IsSuccessStatusCode)
+    //    {
+    //        _message = "File imported successfully.";
+    //        _excelLeagues = leagues;
+    //    }
+    //    else
+    //    {
+    //        _message = "Error importing file: " + response.ReasonPhrase;
+    //    }
+    //}
+
+    private async Task HandleFileSelected(InputFileChangeEventArgs e, string fileType)
+    {
+        if (fileType == "leagues")
+        {
+            _excelLeagues = null;
+
+            using var fileStream = e.File.OpenReadStream();
+            var (response, leagues) = await ImportService.UploadFileAsync(fileStream, e.File.Name);
+
+            if (response.IsSuccessStatusCode)
+            {
+                _message = "File imported successfully.";
+                _excelLeagues = leagues;
+            }
+            else
+            {
+                _message = "Error importing file: " + response.ReasonPhrase;
+            }
+        }
+        else if (fileType == "predictions")
+        {
+            _updatedPredictions = null;
+
+            try
+            {
+                _updatedPredictions = await ImportService.UpdatePendingPredictionsAsync(e.File);
+                _message = "Predictions updated successfully.";
+            }
+            catch (Exception ex)
+            {
+                _message = "Error updating predictions: " + ex.Message;
+            }
+        }
+    }
+    private void ClearData()
+    {
+        _excelLeagues = new List<LeagueDto>();
+        _updatedPredictions = new List<PredictionDto>();
+        _message = "";
+    }
+}

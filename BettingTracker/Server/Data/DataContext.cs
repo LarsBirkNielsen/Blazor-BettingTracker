@@ -65,7 +65,7 @@ public class DataContext : DbContext
              new Team
              {
                  Id = 3,
-                 Name = "Manchester City",
+                 Name = "Man City",
                  LeagueId = 2,
              },
              new Team

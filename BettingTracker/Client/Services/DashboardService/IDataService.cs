@@ -15,5 +15,6 @@ namespace BettingTracker.Client.Services.DashboardService
         Task<int> GetTotalBetsPlayed();
         Task<decimal> GetTotalWagers();
         Task<decimal> GetTotalRoi();
+        Task<(List<TeamProfitModel> BestTeams, List<TeamProfitModel> WorstTeams)> GetTopTeams();
     }
 }

@@ -92,7 +92,7 @@
                 @currentYear - Bank Roll
             </div>
             <div class="card-body">
-                <RadzenChart >
+                <RadzenChart>
                     <RadzenLineSeries Stroke="#A7C7E7" Smooth="true" Data="@yearlyCumulativeProfit" CategoryProperty="Month" Title="Bank Roll"
                                       LineType="LineType.Solid" ValueProperty="Amount">
                         <RadzenMarkers MarkerType="MarkerType.Circle" />
@@ -135,67 +135,52 @@
             <div class="card-header">
                 @currentYear - Top Three Team Performance
             </div>
-            <table class="table top-table">
-                <thead class="thead-dark">
-                    <tr>
-                        <th scope="col"></th>
-                        <th scope="col">Most Profitable Team</th>
-                       @* <th scope="col"></th>*@
-                        <th scope="col">$</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr class="good-team">
-                        <th scope="row"><ion-icon class="win-icon" name="checkmark"></ion-icon></th>
-                        <td>Cheslea</td>
-                        @*<td>Otto</td>*@
-                        <td>400 kr.</td>
-                    </tr>
-                    <tr class="good-team">
-                        <th scope="row"><ion-icon class="win-icon" name="checkmark"></ion-icon></th>
-                        <td>Arsenal</td>
-                       @* <td>Thornton</td>*@
-                        <td>350 kr.</td>
-                    </tr>
-                    <tr class="good-team">
-                        <th scope="row"><ion-icon class="win-icon" name="checkmark"></ion-icon></th>
-                        <td>Real Madrid</td>
-                       @* <td>the Bird</td>*@
-                        <td>325kr.</td>
-                    </tr>
-                </tbody>
-            </table>
+            @if (MostProfitableTeams != null && LeastProfitableTeams != null)
+            {
+                <table class="table top-table">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th scope="col"></th>
+                            <th scope="col">Most Profitable Team</th>
+                            <th scope="col">$</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var team in MostProfitableTeams)
+                        {
+                            <tr class="good-team">
+                                <th scope="row"><ion-icon class="win-icon" name="checkmark"></ion-icon></th>
+                                <td>@team.TeamName</td>
+                                <td>@team.Profit kr.</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
 
-            <table class="table">
-                <thead class="thead-light">
-                    <tr class="tr.no-bottom-border td">
-                        <th scope="col"></th>
-                        <th scope="col">Least Profitable Team</th>
-                        @* <th scope="col"></th>*@
-                        <th scope="col">$</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr class="bad-team">
-                        <th scope="row"><ion-icon class="lost-icon" name="ban"></ion-icon></th>
-                        <td>At. Madrid</td>
-                        @*<td>Otto</td>*@
-                        <td>-450 kr.</td>
-                    </tr>
-                    <tr class="bad-team">
-                        <th scope="row"><ion-icon class="lost-icon" name="ban"></ion-icon></th>
-                        <td>Sunderland</td>
-                        @* <td>Thornton</td>*@
-                        <td>-350 kr.</td>
-                    </tr>
-                    <tr class="bad-team">
-                        <th scope="row"><ion-icon class="lost-icon" name="ban"></ion-icon></th>
-                        <td>Barcelona</td>
-                        @* <td>the Bird</td>*@
-                        <td>-325kr.</td>
-                    </tr>
-                </tbody>
-            </table>
+                <table class="table">
+                    <thead class="thead-light">
+                        <tr class="tr.no-bottom-border td">
+                            <th scope="col"></th>
+                            <th scope="col">Least Profitable Team</th>
+                            <th scope="col">$</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var team in LeastProfitableTeams)
+                        {
+                            <tr class="bad-team">
+                                <th scope="row"><ion-icon class="lost-icon" name="ban"></ion-icon></th>
+                                <td>@team.TeamName</td>
+                                <td>@team.Profit kr.</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+            else
+            {
+                <p>Loading data...</p>
+            }
         </div>
     </div>
 
@@ -232,7 +217,8 @@
     int TotalBetsPlayed;
     private decimal TotalWager;
     private decimal TotalRoi;
-
+    private List<TeamProfitModel> MostProfitableTeams;
+    private List<TeamProfitModel> LeastProfitableTeams;
 
 
 
@@ -253,6 +239,11 @@
         yearlyProfit = await _dataService.LoadCurrentYearProfit();
         yearlyCumulativeProfit = await _dataService.LoadCurrentCumulativeYearProfit();
         chartData = await _dataService.GetWinPercentageChartDataAsync();
+
+        MostProfitableTeams = new List<TeamProfitModel>();
+        LeastProfitableTeams = new List<TeamProfitModel>();
+        (MostProfitableTeams, LeastProfitableTeams) = await _dataService.GetTopTeams();
+
         HitRateProcentage();
 
         StateHasChanged();
@@ -286,6 +277,13 @@
         }
 
         var totalPredictions = winCount + lostCount;
-        winProcentage = Math.Round((winCount / (totalPredictions) * 100)).ToString() + " %";
+        if (totalPredictions > 0)
+        {
+            winProcentage = Math.Round((winCount / (totalPredictions) * 100)).ToString() + " %";
+        }
+        else
+        {
+            winProcentage = "0 %";
+        }
     }
 }

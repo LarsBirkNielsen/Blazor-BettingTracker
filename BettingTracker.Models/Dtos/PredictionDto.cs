@@ -28,7 +28,7 @@ public class PredictionDto
     public string Stake { get; set; } = String.Empty;
     public decimal Profit { get; set; }
     public string Status { get; set; } = "Pending";
-
+    public string TeamToWin { get; set; } = String.Empty ;
     public int LeagueId { get; set; } = 1;
     public string LeagueName { get; set; } = string.Empty;
 

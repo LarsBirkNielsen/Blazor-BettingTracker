@@ -19,12 +19,16 @@ namespace BettingTracker.Client.Services.DashboardService
             _httpClient = http;
         }
 
-        public async Task<ICollection<YearlyItem>> LoadCurrentYearProfit()
+        public async Task<ICollection<YearlyItem>> LoadCurrentYearProfit(HashSet<LeagueDto> leagues = null)
         {
             List<YearlyItem> yearlyItems = new List<YearlyItem>();
 
 
             var data = await _httpClient.GetFromJsonAsync<List<PredictionDto>>("api/prediction/");
+            if (leagues != null && leagues.Count > 0)
+            {
+                data = data.Where(prediction => leagues.Any(league => league.Name == prediction.LeagueName)).ToList();
+            }
             return data
                 .GroupBy(prediction => prediction.KickOff.Month)
                 .OrderBy(prediction => prediction.Key)
@@ -36,12 +40,16 @@ namespace BettingTracker.Client.Services.DashboardService
                 .ToList();
         }
 
-        public async Task<ICollection<YearlyItem>> LoadCurrentCumulativeYearProfit()
+        public async Task<ICollection<YearlyItem>> LoadCurrentCumulativeYearProfit(HashSet<LeagueDto> leagues = null)
         {
             List<YearlyItem> yearlyItems = new List<YearlyItem>();
 
 
             var data = await _httpClient.GetFromJsonAsync<List<PredictionDto>>("api/prediction/");
+            if (leagues != null && leagues.Count > 0)
+            {
+                data = data.Where(prediction => leagues.Any(league => league.Name == prediction.LeagueName)).ToList();
+            }
             var dataPoints = data.Where(prediction => prediction.KickOff >= new DateTime(_currentYear, 1, 1)
                 && prediction.KickOff <= new DateTime(_currentYear, 12, 31))
                 .GroupBy(prediction => prediction.KickOff.Month)
@@ -64,7 +72,7 @@ namespace BettingTracker.Client.Services.DashboardService
 
         }
 
-        public async Task<ThreeMonthsData> LoadLast3MonthsProfit()
+        public async Task<ThreeMonthsData> LoadLast3MonthsProfit(HashSet<LeagueDto> leagues = null)
         {
             var currentMonth = DateTime.Today.Month;
             var lastMonth = DateTime.Today.AddMonths(-1);
@@ -93,6 +101,7 @@ namespace BettingTracker.Client.Services.DashboardService
         private async Task<ICollection<MonthlyItem>> GetMonthlyEarnings(int month, int year)
         {
             var data = await _httpClient.GetFromJsonAsync<List<PredictionDto>>("api/prediction/");
+
 
             return data.Where(earning => earning.KickOff >= new DateTime(year, month, 1)
                 && earning.KickOff <= new DateTime(year, month, LastDayOfMonth(month, year)))
@@ -128,9 +137,13 @@ namespace BettingTracker.Client.Services.DashboardService
             };
         }
 
-        public async Task<object> LoadCurrentYearWinRate()
+        public async Task<object> LoadCurrentYearWinRate(HashSet<LeagueDto> leagues = null)
         {
             var data = await _httpClient.GetFromJsonAsync<List<PredictionDto>>("api/prediction/");
+            if (leagues != null && leagues.Count > 0)
+            {
+                data = data.Where(prediction => leagues.Any(league => league.Name == prediction.LeagueName)).ToList();
+            }
 
             int correctPredictions = data.Count(p => p.Status.Equals("Won"));
             double winPercentage = (double)correctPredictions / data.Count * 100;
@@ -144,9 +157,13 @@ namespace BettingTracker.Client.Services.DashboardService
             return winPercentageSlice;
         }
 
-        public async Task<List<HitRateModel>> GetWinPercentageChartDataAsync()
+        public async Task<List<HitRateModel>> GetWinPercentageChartDataAsync(HashSet<LeagueDto> leagues = null)
         {
             var data = await _httpClient.GetFromJsonAsync<List<PredictionDto>>("api/prediction/");
+            if (leagues != null && leagues.Count > 0)
+            {
+                data = data.Where(prediction => leagues.Any(league => league.Name == prediction.LeagueName)).ToList();
+            }
 
             int correctPredictions = data.Count(p => p.Status.Equals("Won"));
             int incorrectPredictions = data.Count(p => p.Status.Equals("Lost"));
@@ -169,14 +186,19 @@ namespace BettingTracker.Client.Services.DashboardService
             return doughnutChartData;
         }
 
-        public async Task<decimal> GetTotalProfit()
+        public async Task<decimal> GetTotalProfit(HashSet<LeagueDto> leagues = null)
         {
             var predictions = await _httpClient.GetFromJsonAsync<List<PredictionDto>>("api/prediction/");
+
+            if (leagues != null && leagues.Count > 0)
+            {
+                predictions = predictions.Where(p => leagues.Any(l => l.Name == p.LeagueName)).ToList();
+            }
+
             if (predictions != null)
             {
                 decimal profitSum = predictions.Where(p => p.Status != "Pending").Sum(p => p.Profit);
                 return profitSum;
-
             }
             else
             {
@@ -184,9 +206,14 @@ namespace BettingTracker.Client.Services.DashboardService
             }
         }
 
-        public async Task<int> GetTotalBetsPlayed()
+        public async Task<int> GetTotalBetsPlayed(HashSet<LeagueDto> leagues = null)
         {
             var predictions = await _httpClient.GetFromJsonAsync<List<PredictionDto>>("api/prediction/");
+
+            if (leagues != null && leagues.Count > 0)
+            {
+                predictions = predictions.Where(p => leagues.Any(l => l.Name == p.LeagueName)).ToList();
+            }
             if (predictions != null)
             {
                 int betsPLayed = predictions.Where(bets => bets.Status != "Pending").Count();
@@ -198,9 +225,13 @@ namespace BettingTracker.Client.Services.DashboardService
             }
         }
 
-        public async Task<decimal> GetTotalWagers()
+        public async Task<decimal> GetTotalWagers(HashSet<LeagueDto> leagues = null)
         {
             var predictions = await _httpClient.GetFromJsonAsync<List<PredictionDto>>("api/prediction/");
+            if (leagues != null && leagues.Count > 0)
+            {
+                predictions = predictions.Where(p => leagues.Any(l => l.Name == p.LeagueName)).ToList();
+            }
             if (predictions != null)
             {
                 decimal profitSum = predictions.Where(p => p.Status != "Pending").Sum(p =>
@@ -223,10 +254,10 @@ namespace BettingTracker.Client.Services.DashboardService
             }
         }
 
-        public async Task<decimal> GetTotalRoi()
+        public async Task<decimal> GetTotalRoi(HashSet<LeagueDto> leagues = null)
         {
-            var TotalProfit = await GetTotalProfit();
-            var TotalWager = await GetTotalWagers();
+            var TotalProfit = await GetTotalProfit(leagues);
+            var TotalWager = await GetTotalWagers(leagues);
             if (TotalWager > 0)
             {
                 var TotalRoi = Math.Round((TotalProfit / TotalWager) * 100, 1);
@@ -239,9 +270,13 @@ namespace BettingTracker.Client.Services.DashboardService
             }
         }
 
-        public async Task<(List<TeamProfitModel> BestTeams, List<TeamProfitModel> WorstTeams)> GetTopTeams()
+        public async Task<(List<TeamProfitModel> BestTeams, List<TeamProfitModel> WorstTeams)> GetTopTeams(HashSet<LeagueDto> leagues = null)
         {
             var data = await _httpClient.GetFromJsonAsync<List<PredictionDto>>("api/prediction/");
+            if (leagues != null && leagues.Count > 0)
+            {
+                data = data.Where(prediction => leagues.Any(league => league.Name == prediction.LeagueName)).ToList();
+            }
 
             var filteredData = data.Where(prediction => !string.IsNullOrWhiteSpace(prediction.TeamToWin));
 

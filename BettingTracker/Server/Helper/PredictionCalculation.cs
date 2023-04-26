@@ -35,7 +35,7 @@
                     return awayTeam;
                 case "x":
                 case "X":
-                    return "No Team";
+                    return "Draw";
                 default:
                     return default;
             }

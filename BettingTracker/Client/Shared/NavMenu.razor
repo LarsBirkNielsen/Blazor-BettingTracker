@@ -4,6 +4,10 @@
 @attribute [Authorize]
 
 <AuthorizeView>
+    @{
+        var user = context.User;
+        bool isAdmin = user.Identity.IsAuthenticated && user.IsInRole("Admin");
+    }
 
     <div class="top-row navbar navbar-dark">
         <div class="container-fluid">
@@ -63,33 +67,28 @@
                     </div>
                 </NavLink>
             </div>
-            <div class="bottom-nav">
-                <div class="nav-item px-3">
-                    <div class="nav-link-header">
-                        ADMIN
+            @if (isAdmin)
+            {
+                <div class="bottom-nav">
+                    <div class="nav-item px-3">
+                        <div class="nav-link-header">
+                            ADMIN
+                        </div>
+                        <NavLink class="nav-link" href="/admin/import-data">
+                            <ion-icon class="oi" aria-hidden="true" name="server-outline"></ion-icon>
+                            <div class="text">
+                                Import From Excel
+                            </div>
+                        </NavLink>
                     </div>
-                    <NavLink class="nav-link" href="/admin/import-data">
-                        <ion-icon class="oi" aria-hidden="true" name="server-outline"></ion-icon>
-                        <div class="text">
-                            Import From Excel
-                        </div>
-                    </NavLink>
                 </div>
-@*                <div class="nav-item px-3">
-                    <NavLink class="nav-link" href="admin/import-predictions">
-                        <ion-icon class="oi" aria-hidden="true" name="server-outline"></ion-icon>
-                        <div class="text">
-                            Import Predictions
-                        </div>
-                    </NavLink>
-                </div>*@
-            </div>
+            }
             <div class="bottom-nav">
                 <div class="nav-item px-3">
                     <div class="nav-link-header">
                         SETTINGS
                     </div>
-                    <NavLink class="nav-link" href="prediction-history">
+                    <NavLink class="nav-link" href="profile">
                         <ion-icon class="oi" aria-hidden="true" name="settings-outline"></ion-icon>
                         <div class="text">
                             Account

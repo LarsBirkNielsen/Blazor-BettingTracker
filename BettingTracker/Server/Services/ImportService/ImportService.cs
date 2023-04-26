@@ -270,7 +270,15 @@ namespace BettingTracker.Server.Services.ImportService
                     }
 
                     decimal.TryParse(prediction.Stake, out decimal stake);
-                    prediction.Profit = (odds * stake) - stake;
+
+                    if (prediction.Status == "Won")
+                    {
+                        prediction.Profit = (odds * stake) - stake;
+                    }
+                    else // Lost
+                    {
+                        prediction.Profit = stake * -1;
+                    }
                     prediction.Odds = odds.ToString();
 
                     var predictionEntity = await _context.Predictions.FindAsync(prediction.Id);

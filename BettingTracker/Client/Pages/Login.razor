@@ -16,8 +16,9 @@
                     <DataAnnotationsValidator />
                     <div class="mb-3">
                         <label for="email">Email</label>
-                        <InputText id="email" @bind-Value="user.Email" class="form-control" />
-                        <ValidationMessage For="@(() => user.Email)" />
+                        <InputText id="email" @bind-Value="user.Email" class="form-control" autocomplete="off" />
+                        <ValidationMessage For="@(() => user.Email)"
+                            />
                     </div>
                     <div class="mb-3">
                         <label for="password">Password</label>
@@ -96,9 +97,16 @@ else
         var result = await authService.Register(registerUser);
         message = result.Message;
         if (result.Success)
+        {
             messageCssClass = "text-success";
+            user.Email = registerUser.Email;
+            user.Password = registerUser.Password;
+            await HandleLogin(); // Log in the user after successful registration
+        }
         else
+        {
             messageCssClass = "text-danger";
+        }
     }
 
     private void toggleForm()

@@ -227,8 +227,46 @@ namespace BettingTracker.Client.Services.DashboardService
         {
             var TotalProfit = await GetTotalProfit();
             var TotalWager = await GetTotalWagers();
-            var TotalRoi = Math.Round((TotalProfit / TotalWager) * 100, 1);
-            return TotalRoi;
+            if (TotalWager > 0)
+            {
+                var TotalRoi = Math.Round((TotalProfit / TotalWager) * 100, 1);
+                return TotalRoi;
+
+            }
+            else
+            {
+                return 0;
+            }
+        }
+
+        public async Task<(List<TeamProfitModel> BestTeams, List<TeamProfitModel> WorstTeams)> GetTopTeams()
+        {
+            var data = await _httpClient.GetFromJsonAsync<List<PredictionDto>>("api/prediction/");
+
+            var filteredData = data.Where(prediction => !string.IsNullOrWhiteSpace(prediction.TeamToWin));
+
+            var teamProfits = filteredData
+                .GroupBy(prediction => prediction.TeamToWin)
+                .Select(group => new TeamProfitModel
+                {
+                    TeamName = group.Key,
+                    Profit = group.Sum(prediction => prediction.Profit)
+                })
+                .ToList();
+
+            var bestTeams = teamProfits
+                .Where(teamProfit => teamProfit.Profit > 0)
+                .OrderByDescending(teamProfit => teamProfit.Profit)
+                .Take(3)
+                .ToList();
+
+            var worstTeams = teamProfits
+                .Where(teamProfit => teamProfit.Profit < 0)
+                .OrderBy(teamProfit => teamProfit.Profit)
+                .Take(3)
+                .ToList();
+
+            return (bestTeams, worstTeams);
         }
     }
 }

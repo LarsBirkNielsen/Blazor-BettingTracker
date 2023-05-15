@@ -1,0 +1,26 @@
+﻿@using BettingTracker.Client.Services.DashboardService
+@using System.Globalization
+@inherits ComponentBase
+
+
+
+@code {
+
+    [Parameter]
+    public ICollection<YearlyItem> YearlyProfit { get; set; }
+
+    private string FormatAsDKK(object value)
+    {
+        return ((double)value).ToString("C0", CultureInfo.CreateSpecificCulture("da-DK"));
+    }
+}
+
+
+<RadzenChart>
+    <RadzenColumnSeries Stroke="#AACDBE" Fill="#AACDBE" Data="@YearlyProfit" CategoryProperty="Month" ValueProperty="Amount" Title="Profit" LineType="LineType.Dashed" />
+    <RadzenColumnOptions Radius="5" />
+    <RadzenValueAxis Formatter="@FormatAsDKK">
+        <RadzenGridLines Visible="true" />
+        <RadzenAxisTitle Text="Amount in DKK" />
+    </RadzenValueAxis>
+</RadzenChart>

@@ -6,7 +6,7 @@
     margin-bottom: 1rem;
 }
 
-.test{
+.adj-height {
     height: 22.5rem;
 }
 
@@ -15,19 +15,8 @@
     color: #547793;
 }
 
-.top-card-header-text-color {
-    color: #547793;
-}
 
-.top-card-sub-header-text-color {
-    color: #AACDBE;
-    font-size: 1.2rem;
-}
 
-.top-table {
-    margin-top: 0.5rem;
-    margin-bottom: 0.1rem;
-}
 
 
 table, th, td {

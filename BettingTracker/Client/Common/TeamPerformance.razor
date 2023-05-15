@@ -1,0 +1,91 @@
+﻿@using BettingTracker.Client.Services.DashboardService
+@using System.Globalization
+@inherits ComponentBase
+
+
+
+@code {
+
+    [Parameter]
+    public int currentYear { get; set; }
+
+    [Parameter]
+    public List<TeamProfitModel> MostProfitableTeams { get; set; }
+
+    [Parameter]
+    public List<TeamProfitModel> LeastProfitableTeams { get; set; }
+}
+
+
+@if (MostProfitableTeams != null && LeastProfitableTeams != null)
+{
+    <div class="flex-container">
+        <div class="flex-item">
+            <table class="table top-table">
+                <thead class="thead-dark">
+                    <tr>
+                        <th scope="col"></th>
+                        <th scope="col">Most Profitable Team</th>
+                        <th scope="col">$</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (MostProfitableTeams.Any())
+                    {
+                        foreach (var team in MostProfitableTeams)
+                        {
+                            <tr class="good-team">
+                                <th scope="row"><ion-icon class="win-icon" name="checkmark"></ion-icon></th>
+                                <td>@team.TeamName</td>
+                                <td>@team.Profit kr.</td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr class="dummy-row">
+                            <td colspan="3"></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <div class="flex-item">
+
+            <table class="table">
+                <thead class="thead-light">
+                    <tr class="tr.no-bottom-border td">
+                        <th scope="col"></th>
+                        <th scope="col">Least Profitable Team</th>
+                        <th scope="col">$</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (LeastProfitableTeams.Any())
+                    {
+                        foreach (var team in LeastProfitableTeams)
+                        {
+                            <tr class="bad-team">
+                                <th scope="row"><ion-icon class="lost-icon" name="ban"></ion-icon></th>
+                                <td>@team.TeamName</td>
+                                <td>@team.Profit kr.</td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr class="dummy-row">
+                            <td colspan="3"></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+}
+else
+{
+    <p>Loading data...</p>
+}
+

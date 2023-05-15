@@ -1,4 +1,5 @@
 ﻿@page "/dashboard"
+@using BettingTracker.Client.Common
 @using BettingTracker.Client.Services
 @using System.Globalization
 @using BettingTracker.Client.Services.DashboardService
@@ -32,104 +33,11 @@
     </div>
 
     <div class="row">
-
-        <!-- Earnings (Monthly) Card Example -->
-        <div class="col-xl-3 col-md-6 margin-b">
-            <div class="card border-left-primary shadow h-100 py-2">
-                <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="text-xs font-weight-bold top-card-text-color text-uppercase mb-1">
-                                TOTAL PROFIT
-                            </div>
-                            <div class="h5 mb-0 font-weight-bold top-card-sub-header-text-color">@TotalProfit Kr.</div>
-                        </div>
-                        <div class="col-auto">
-                            <ion-icon class="top-card-icon" name="cash-outline"></ion-icon>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-xl-3 col-md-6 margin-b">
-            <div class="card border-left-primary shadow h-100 py-2">
-                <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="text-xs font-weight-bold top-card-text-color text-uppercase text-uppercase mb-1">
-                                Total bets placed
-                            </div>
-                            <div class="h5 mb-0 font-weight-bold top-card-sub-header-text-color">@TotalBetsPlayed</div>
-                        </div>
-                        <div class="col-auto">
-                            <ion-icon class="top-card-icon" name="dice"></ion-icon>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-xl-3 col-md-6 margin-b">
-            <div class="card border-left-primary shadow h-100 py-2">
-                <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="text-xs font-weight-bold top-card-text-color text-uppercase text-uppercase mb-1">
-                                Total wager
-                            </div>
-                            <div class="h5 mb-0 font-weight-bold top-card-sub-header-text-color">@TotalWager Kr.</div>
-                        </div>
-                        <div class="col-auto">
-                            <ion-icon class="top-card-icon" name="wallet"></ion-icon>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-xl-3 col-md-6 margin-b">
-            <div class="card border-left-primary shadow h-100 py-2">
-                <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="text-xs font-weight-bold top-card-text-color text-uppercase text-uppercase mb-1">
-                                TOTAL roi
-                            </div>
-                            <div class="h5 mb-0 font-weight-bold top-card-sub-header-text-color">@TotalRoi %</div>
-                        </div>
-                        <div class="col-auto">
-                            <ion-icon class="top-card-icon" name="trending-up"></ion-icon>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
+        <DashboardCard Title="Total Profit" Data="@TotalProfit.ToString("C", new CultureInfo("da-DK"))" IconName="cash-outline" />
+        <DashboardCard Title="Total Bets Placed" Data="@TotalBetsPlayed.ToString()" IconName="dice" />
+        <DashboardCard Title="Total Wager" Data="@TotalWager.ToString("C", new CultureInfo("da-DK"))" IconName="wallet" />
+        <DashboardCard Title="Total Roi" Data="@(TotalRoi.ToString("F2") + " %")" IconName="wallet" />
     </div>
-    @*<div class="filter-bar">
-    @if (Leagues != null)
-    {
-    foreach (var league in Leagues)
-    {
-    <div class="form-check form-check-inline filter-item">
-    <input class="form-check-input" type="checkbox" id="@league.Name" value="@league.Name" checked="@IsLeagueChecked(league)" @onchange="((ChangeEventArgs __e) => LeagueChanged(__e, league))" />
-    <label class="form-check-label" for="@league.Name">@league.Name</label>
-    </div>
-    }
-    }
-    else
-    {
-    <p>Loading leagues...</p>
-    }
-    </div>*@
-
-
-
-
-
-
-
 
     @*Accumalativ line-chart*@
     <div class="row">
@@ -139,15 +47,7 @@
                     @currentYear - Bank Roll
                 </div>
                 <div class="card-body">
-                    <RadzenChart>
-                        <RadzenLineSeries Stroke="#A7C7E7" Smooth="true" Data="@yearlyCumulativeProfit" CategoryProperty="Month" Title="Bank Roll"
-                                          LineType="LineType.Solid" ValueProperty="Amount">
-                            <RadzenMarkers MarkerType="MarkerType.Circle" />
-                        </RadzenLineSeries>
-                        <RadzenValueAxis Formatter="@FormatAsDKK">
-                            <RadzenGridLines Visible="true" />
-                        </RadzenValueAxis>
-                    </RadzenChart>
+                    <LineChart CurrentYear="currentYear" YearlyCumulativeProfit="yearlyCumulativeProfit" />
                 </div>
             </div>
         </div>
@@ -158,19 +58,12 @@
                     @currentYear - Hit Rate
                 </div>
                 <div class="card-body">
-                    <RadzenChart>
-                        <RadzenDonutSeries Strokes="@doughnutStrokeColor" Fills="@doughnutFillColors" Title="Count" Data="@chartData" CategoryProperty="Label" ValueProperty="Value">
-                            <ChildContent>
-                                <RadzenSeriesDataLabels Visible="@showDataLabels" />
-                            </ChildContent>
-                            <TitleTemplate>
-                                <div class="rz-donut-content">
-                                    <div>@winProcentage</div>
-                                </div>
-                            </TitleTemplate>
-                        </RadzenDonutSeries>
-                    </RadzenChart>
-
+                    <DonutChart CurrentYear="currentYear"
+                                DoughnutFillColors="doughnutFillColors"
+                                DoughnutStrokeColor="doughnutStrokeColor"
+                                ChartData="chartData"
+                                ShowDataLabels="showDataLabels"
+                                WinPercentage="@winProcentage" />
                 </div>
             </div>
         </div>
@@ -178,78 +71,27 @@
 
     <div class="row">
         <div class="col-lg-4 margin-b">
-            <div class="card test">
+            <div class="card adj-height">
                 <div class="card-header">
                     @currentYear - Top Three Team Performance
                 </div>
-                @if (MostProfitableTeams != null && LeastProfitableTeams != null)
-                {
-                    <table class="table top-table">
-                        <thead class="thead-dark">
-                            <tr>
-                                <th scope="col"></th>
-                                <th scope="col">Most Profitable Team</th>
-                                <th scope="col">$</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var team in MostProfitableTeams)
-                            {
-                                <tr class="good-team">
-                                    <th scope="row"><ion-icon class="win-icon" name="checkmark"></ion-icon></th>
-                                    <td>@team.TeamName</td>
-                                    <td>@team.Profit kr.</td>
-                                </tr>
-                            }
-                        </tbody>
-                    </table>
-
-                    <table class="table">
-                        <thead class="thead-light">
-                            <tr class="tr.no-bottom-border td">
-                                <th scope="col"></th>
-                                <th scope="col">Least Profitable Team</th>
-                                <th scope="col">$</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var team in LeastProfitableTeams)
-                            {
-                                <tr class="bad-team">
-                                    <th scope="row"><ion-icon class="lost-icon" name="ban"></ion-icon></th>
-                                    <td>@team.TeamName</td>
-                                    <td>@team.Profit kr.</td>
-                                </tr>
-                            }
-                        </tbody>
-                    </table>
-                }
-                else
-                {
-                    <p>Loading data...</p>
-                }
+                <TeamPerformance LeastProfitableTeams="LeastProfitableTeams" MostProfitableTeams="MostProfitableTeams"/>
             </div>
         </div>
 
         <div class="col-lg-8 margin-b ">
-            <div class="card test">
+            <div class="card adj-height">
                 <div class="card-header">
                     @currentYear - Monthly Profit
                 </div>
                 <div class="card-body">
-                    <RadzenChart>
-                        <RadzenColumnSeries Stroke="#AACDBE" Fill="#AACDBE" Data="@yearlyProfit" CategoryProperty="Month" ValueProperty="Amount" Title="Profit" LineType="LineType.Dashed" />
-                        <RadzenColumnOptions Radius="5" />
-                        <RadzenValueAxis Formatter="@FormatAsDKK">
-                            <RadzenGridLines Visible="true" />
-                            <RadzenAxisTitle Text="Amount in DKK" />
-                        </RadzenValueAxis>
-                    </RadzenChart>
+                    <BarChart YearlyProfit="@yearlyProfit" />
                 </div>
             </div>
         </div>
     </div>
 </div>
+
 
 
 @code {
@@ -269,14 +111,6 @@
     private HashSet<LeagueDto> selectedLeagues = new HashSet<LeagueDto>();
     private bool selectAllLeagues;
     public IEnumerable<LeagueDto> Leagues { get; set; }
-
-
-
-
-
-
-
-
 
     protected override async Task OnInitializedAsync()
     {
@@ -339,13 +173,6 @@
     // Add this method to refresh data when checkboxes are changed
     private async Task RefreshData()
     {
-        // Call your data loading methods with the updated 'selectedLeagues' HashSet
-        // For example:
-        //TotalProfit = await _dataService.GetTotalProfit(selectedLeagues);
-        //yearlyCumulativeProfit = await _dataService.LoadCurrentCumulativeYearProfit(selectedLeagues);
-        //TotalBetsPlayed = await _dataService.GetTotalBetsPlayed(selectedLeagues);
-        //TotalWager = await _dataService.GetTotalWagers(selectedLeagues);
-        //TotalRoi = await _dataService.GetTotalRoi(selectedLeagues);
 
         TotalProfit = await _dataService.GetTotalProfit(selectedLeagues);
         TotalBetsPlayed = await _dataService.GetTotalBetsPlayed(selectedLeagues);
@@ -356,13 +183,11 @@
         yearlyCumulativeProfit = await _dataService.LoadCurrentCumulativeYearProfit(selectedLeagues);
         chartData = await _dataService.GetWinPercentageChartDataAsync(selectedLeagues);
 
-        //MostProfitableTeams = new List<TeamProfitModel>();
-        //LeastProfitableTeams = new List<TeamProfitModel>();
+
         (MostProfitableTeams, LeastProfitableTeams) = await _dataService.GetTopTeams(selectedLeagues);
         HitRateProcentage();
 
 
-        // Make sure to update all your data loading methods to accept the HashSet<string> parameter
     }
 
     private ICollection<string> doughnutFillColors = new List<string>() { "#ff6961", "#AACDBE" };

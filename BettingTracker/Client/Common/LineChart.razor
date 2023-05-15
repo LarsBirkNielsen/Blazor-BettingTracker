@@ -1,0 +1,29 @@
+﻿@using BettingTracker.Client.Services.DashboardService
+@using System.Globalization
+@inherits ComponentBase
+
+
+
+@code {
+    [Parameter]
+    public int CurrentYear { get; set; }
+
+    [Parameter]
+    public ICollection<YearlyItem> YearlyCumulativeProfit { get; set; }
+
+    private string FormatAsDKK(object value)
+    {
+        return ((double)value).ToString("C0", CultureInfo.CreateSpecificCulture("da-DK"));
+    }
+}
+
+
+<RadzenChart>
+    <RadzenLineSeries Stroke="#A7C7E7" Smooth="true" Data="@YearlyCumulativeProfit" CategoryProperty="Month" Title="Bank Roll"
+                      LineType="LineType.Solid" ValueProperty="Amount">
+        <RadzenMarkers MarkerType="MarkerType.Circle" />
+    </RadzenLineSeries>
+    <RadzenValueAxis Formatter="@FormatAsDKK">
+        <RadzenGridLines Visible="true" />
+    </RadzenValueAxis>
+</RadzenChart>

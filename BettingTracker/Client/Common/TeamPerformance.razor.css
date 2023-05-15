@@ -1,0 +1,45 @@
+﻿th:nth-child(1) {
+    width: 50px; /* Adjust as needed */
+}
+
+th:nth-child(2) {
+    width: 200px; /* Adjust as needed */
+}
+
+th:nth-child(3) {
+    width: 100px; /* Adjust as needed */
+}
+.top-table {
+    margin-top: 0.5rem;
+    margin-bottom: 0.1rem;
+}
+
+
+table, th, td {
+    border: none;
+    margin-left: 1.5rem;
+}
+
+th {
+    font-weight: 800 !important;
+    color: #547793;
+}
+
+.good-team {
+    color: #AACDBE;
+    font-size: medium;
+}
+
+.bad-team {
+    color: #ff6961;
+    font-size: medium;
+}
+.bad-team ion-icon.lost-icon {
+    font-size: large;
+    color: #ff6961;
+}
+
+.good-team ion-icon.win-icon {
+    font-size: large;
+    color:#AACDBE;
+}

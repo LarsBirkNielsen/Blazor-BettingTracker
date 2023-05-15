@@ -1,0 +1,38 @@
+﻿@using BettingTracker.Client.Services.DashboardService
+@inherits ComponentBase
+
+
+
+@code {
+    [Parameter]
+    public int CurrentYear { get; set; }
+
+    [Parameter]
+    public ICollection<string> DoughnutFillColors { get; set; }
+
+    [Parameter]
+    public ICollection<string> DoughnutStrokeColor { get; set; }
+
+    [Parameter]
+    public List<HitRateModel> ChartData { get; set; }
+
+    [Parameter]
+    public bool ShowDataLabels { get; set; }
+
+    [Parameter]
+    public string WinPercentage { get; set; }
+}
+
+
+<RadzenChart>
+    <RadzenDonutSeries Strokes="@DoughnutStrokeColor" Fills="@DoughnutFillColors" Title="Count" Data="@ChartData" CategoryProperty="Label" ValueProperty="Value">
+        <ChildContent>
+            <RadzenSeriesDataLabels Visible="@ShowDataLabels" />
+        </ChildContent>
+        <TitleTemplate>
+            <div class="rz-donut-content">
+                <div>@WinPercentage</div>
+            </div>
+        </TitleTemplate>
+    </RadzenDonutSeries>
+</RadzenChart>
